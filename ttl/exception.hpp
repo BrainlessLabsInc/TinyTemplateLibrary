@@ -8,10 +8,12 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_exception__hpp
-#define __ttl_exception__hpp
+#ifndef __TTL_EXCEPTION_INCLUDED__
+#define __TTL_EXCEPTION_INCLUDED__
 
-#include "ttl/config.hpp"
+#ifndef __TTL_CONFIG_INCLUDED__
+#include <ttl/config.hpp>
+#endif
 
 namespace ttl
 {
@@ -22,4 +24,4 @@ namespace ttl
 	};
 };
 
-#endif //__exception__hpp
+#endif //__TTL_EXCEPTION_INCLUDED__
