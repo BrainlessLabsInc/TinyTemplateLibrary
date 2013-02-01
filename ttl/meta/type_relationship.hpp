@@ -17,15 +17,15 @@ namespace ttl{namespace meta{namespace type_traits{
       typedef char First;
       struct Second{char _[2];};
       template<typename ToType>
-      static First test(ToType);
-      static Second test(...);
+      First test(ToType);
+      Second test(...);
       template<typename FromType>
-      static FromType makeType();
+      FromType makeType();
       template<typename FromType,typename ToType>
       struct is_convertible_impl
       {
       public:
-         const static bool value = sizeof(test(makeType())) == sizeof(First);
+         const static bool value = sizeof(test(makeType<FromType>())) == sizeof(First);
       };
 
       // is_base_of implementatio
@@ -40,9 +40,9 @@ namespace ttl{namespace meta{namespace type_traits{
       template <typename BaseType, typename DerivedType>
       struct is_base_of_impl
       {
-         static const bool value = sizeof(check(ConverterCast<B,D>(), int())) == sizeof(First);
+         static const bool value = sizeof(check(ConverterCast<BaseType,DerivedType>(), int())) == sizeof(First);
       private:
-         template <typename T> 
+         template <typename T>
          First check(DerivedType*, T);
          Second check(BaseType*, int);
       };
@@ -53,18 +53,18 @@ namespace ttl{namespace meta{namespace type_traits{
          template<typename T> struct identity { typedef T type; };
 
          template<typename,typename>
-         struct tovoid { typedef void type; }; 
+         struct tovoid { typedef void type; };
       }
 
-      // detects private and ambiguous base classes, like boost::is_base_of, 
-      // but using a different technique. 
-      template<typename B, typename D, typename = void> 
-      struct isbase { static bool const value = false; }; 
+      // detects private and ambiguous base classes, like boost::is_base_of,
+      // but using a different technique.
+      template<typename B, typename D, typename = void>
+      struct isbase { static bool const value = false; };
 
-      template<typename B, typename D> 
-      struct isbase<B, D, 
-         typename isbase_detail::tovoid<int B::*, int D::*>::type> 
-      { 
+      template<typename B, typename D>
+      struct isbase<B, D,
+         typename isbase_detail::tovoid<int B::*, int D::*>::type>
+      {
          // will be used if B is *not* a base of D
          static isbase_detail::identity<char[1]>::type &c(B&, int);
 
@@ -77,7 +77,7 @@ namespace ttl{namespace meta{namespace type_traits{
          };
 
          static inheritance irval();
-         static bool const value = sizeof c(irval(), 0) == 2; 
+         static bool const value = sizeof c(irval(), 0) == 2;
       };
       */
    }// namespace _convertable_impl
