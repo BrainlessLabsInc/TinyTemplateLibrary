@@ -25,6 +25,7 @@ namespace ttl{namespace meta{namespace type_traits{
          static const unsigned int value = sizeDiff;
       };
 
+      template <typename T> struct all_alignof_impl;
       template <typename T>
       struct alignof_helper<T, 0>
       {
@@ -57,23 +58,23 @@ namespace ttl{namespace meta{namespace type_traits{
 
    //rank
    template<class T>
-   struct rank 
-      : public integral_constant<unsigned int, 0> 
+   struct rank
+      : public integral_constant<unsigned int, 0>
    {/**/};
 
    template<class T>
-   struct rank<T[]> 
-      : public integral_constant<unsigned int, rank<T>::value + 1> 
+   struct rank<T[]>
+      : public integral_constant<unsigned int, rank<T>::value + 1>
    {/**/};
 
    template<class T, size_t N>
-   struct rank<T[N]> 
+   struct rank<T[N]>
       : public integral_constant<unsigned int, rank<T>::value + 1> {};
 
-   //extent 
+   //extent
    template<class T, unsigned N = 0>
-   struct extent 
-      : public integral_constant<unsigned int, 0> 
+   struct extent
+      : public integral_constant<unsigned int, 0>
    {/**/};
 
    template<class T>
