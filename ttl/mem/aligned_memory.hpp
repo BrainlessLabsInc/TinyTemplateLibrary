@@ -16,14 +16,14 @@
 // http://msdn.microsoft.com/en-us/library/83ythb65%28v=vs.90%29.aspx
 // http://stackoverflow.com/questions/7895869/cross-platform-alignx-macro
 // Credited to Sebastian Cabot
-#ifdef TTL_MSVC
+#if defined(TTL_MSVC)
 #define _ALIGNED(x) __declspec(align(x))
-#elif TTL_GCC
+#elif defined(TTL_GCC)
 #define _ALIGNED(x) __attribute__ ((aligned(x)))
 #endif
 #define _ALIGNED_TYPE(t,x) typedef t _ALIGNED(x)
 
-// http://stackoverflow.com/questions/6959261/how-can-i-simulate-alignast 
+// http://stackoverflow.com/questions/6959261/how-can-i-simulate-alignast
 // and boost aligned_storage implementation
 // http://gustedt.wordpress.com/2012/01/02/emulating-c11-compiler-features-with-gcc-_generic/
 namespace ttl{namespace mem{namespace type_traits{
@@ -88,104 +88,104 @@ namespace ttl{namespace mem{namespace type_traits{
          static const bool found0 = false;
 
          typedef lower_alignment_helper< found0,target,char > T0;
-         typename T0::type t0; 
-         static const bool found1 = T0::value; 
+         typename T0::type t0;
+         static const bool found1 = T0::value;
 
          typedef lower_alignment_helper<found1,target,short > T1;
-         typename T1::type t1; 
-         static const bool found2 = T1::value; 
+         typename T1::type t1;
+         static const bool found2 = T1::value;
 
          typedef lower_alignment_helper< found2,target,int > T2;
-         typename T2::type t2; 
-         static const bool found3 = T2::value; 
+         typename T2::type t2;
+         static const bool found3 = T2::value;
 
          typedef lower_alignment_helper< found3,target,long > T3;
-         typename T3::type t3; 
-         static const bool found4 = T3::value; 
+         typename T3::type t3;
+         static const bool found4 = T3::value;
 
          typedef lower_alignment_helper< found4,target,long long > T4;
-         typename T4::type t4; 
-         static const bool found5 = T4::value; 
+         typename T4::type t4;
+         static const bool found5 = T4::value;
 
          typedef lower_alignment_helper< found5,target,float > T5;
-         typename T5::type t5; 
-         static const bool found6 = T5::value; 
+         typename T5::type t5;
+         static const bool found6 = T5::value;
 
          typedef lower_alignment_helper< found6,target,double > T6;
-         typename T6::type t6; 
-         static const bool found7 = T6::value; 
+         typename T6::type t6;
+         static const bool found7 = T6::value;
 
          typedef lower_alignment_helper< found7,target,long double > T7;
-         typename T7::type t7; 
-         static const bool found8 = T7::value; 
+         typename T7::type t7;
+         static const bool found8 = T7::value;
 
          typedef lower_alignment_helper< found8,target,void* > T8;
-         typename T8::type t8; 
-         static const bool found9 = T8::value; 
+         typename T8::type t8;
+         static const bool found9 = T8::value;
 
          typedef lower_alignment_helper< found9,target,function_ptr > T9;
-         typename T9::type t9; 
-         static const bool found10 = T9::value; 
+         typename T9::type t9;
+         static const bool found10 = T9::value;
 
          typedef lower_alignment_helper< found10,target,member_ptr > T10;
-         typename T10 t10; 
-         static const bool found11 = T10::value; 
+         typename T10::type t10;
+         static const bool found11 = T10::value;
 
          typedef lower_alignment_helper< found11,target,member_function_ptr > T11;
-         typename T11::type t11; 
-         static const bool found12 = T11::value; 
+         typename T11::type t11;
+         static const bool found12 = T11::value;
 
-         typedef ower_alignment_helper< found12,target,boost::detail::has_one_T< char > > T12;
-         typename T12::type t12; 
-         static const bool found13 = T12::value; 
+         typedef lower_alignment_helper< found12,target,has_one_T< char > > T12;
+         typename T12::type t12;
+         static const bool found13 = T12::value;
 
-         typedef lower_alignment_helper< found13,target,boost::detail::has_one_T< short > > T13;
-         typename T13::type t13; 
-         static const bool found14 = T13::value; 
+         typedef lower_alignment_helper< found13,target,has_one_T< short > > T13;
+         typename T13::type t13;
+         static const bool found14 = T13::value;
 
-         typedef lower_alignment_helper< found14,target,boost::detail::has_one_T< int > > T14;
-         typename T14::type t14; 
-         static const bool found15 = T14::value; 
+         typedef lower_alignment_helper< found14,target,has_one_T< int > > T14;
+         typename T14::type t14;
+         static const bool found15 = T14::value;
 
-         typedef lower_alignment_helper< found15,target,boost::detail::has_one_T< long > > T15;
-         typename T15::type t15; 
-         static const bool found16 = T15::value; 
+         typedef lower_alignment_helper< found15,target,has_one_T< long > > T15;
+         typename T15::type t15;
+         static const bool found16 = T15::value;
 
-         typedef lower_alignment_helper< found16,target,boost::detail::has_one_T< long long > > T16;
-         typename T16::type t16; 
-         static const bool found17 = T16::value; 
+         typedef lower_alignment_helper< found16,target,has_one_T< long long > > T16;
+         typename T16::type t16;
+         static const bool found17 = T16::value;
 
-         typedef lower_alignment_helper< found17,target,boost::detail::has_one_T< float > > T17;
-         typename T17::type t17; 
-         static const bool found18 = T17::value; 
+         typedef lower_alignment_helper< found17,target,has_one_T< float > > T17;
+         typename T17::type t17;
+         static const bool found18 = T17::value;
 
-         typedef lower_alignment_helper< found18,target,boost::detail::has_one_T< double > > T18;
-         typename T18::type t18; 
-         static const bool found19 = T18::value; 
+         typedef lower_alignment_helper< found18,target,has_one_T< double > > T18;
+         typename T18::type t18;
+         static const bool found19 = T18::value;
 
-         typedef lower_alignment_helper< found19,target,boost::detail::has_one_T< long double > > T19;
-         typename T19::type t19; 
-         static const bool found20 = T19::value; 
+         typedef lower_alignment_helper< found19,target,has_one_T< long double > > T19;
+         typename T19::type t19;
+         static const bool found20 = T19::value;
 
-         typedef lower_alignment_helper< found20,target,boost::detail::has_one_T< void* > > T20;
-         typename T20::type t20; 
-         static const bool found21 = T20::value; 
+         typedef lower_alignment_helper< found20,target,has_one_T< void* > > T20;
+         typename T20::type t20;
+         static const bool found21 = T20::value;
 
-         typedef lower_alignment_helper< found21,target,boost::detail::has_one_T< function_ptr > > T21;
-         typename T21::type t21; 
-         static const bool found22 = T21::value; 
+         typedef lower_alignment_helper< found21,target,has_one_T< function_ptr > > T21;
+         typename T21::type t21;
+         static const bool found22 = T21::value;
 
-         typedef lower_alignment_helper< found22,target,boost::detail::has_one_T< member_ptr > > T22;
-         typename T22::type t22; 
-         static const bool found23 = T22::value; 
+         typedef lower_alignment_helper< found22,target,has_one_T< member_ptr > > T22;
+         typename T22::type t22;
+         static const bool found23 = T22::value;
 
-         typedef lower_alignment_helper< found23,target,boost::detail::has_one_T< member_function_ptr > > T23;
-         typename T23::type t23; 
-         static const bool found24 = T23::value;  
+         typedef lower_alignment_helper< found23,target,has_one_T< member_function_ptr > > T23;
+         typename T23::type t23;
+         static const bool found24 = T23::value;
       };
 
       //struct is_aligned -------------------------------
-      template<std::size_t TypeForAlign, std::size_t Align>
+      template<unsigned int TypeForAlign, unsigned int Align>
       struct is_aligned
       {
          static const bool value = (TypeForAlign >= Align) & (TypeForAlign % Align == 0);
@@ -202,17 +202,17 @@ namespace ttl{namespace mem{namespace type_traits{
             , max_align
          >::type align_t;
 
-         static const unsigned int found = alignment_of<align_t>::value;
+         static const unsigned int found = ::ttl::meta::type_traits::alignment_of<align_t>::value;
       public:
          typedef align_t type;
       };
 
       template <std::size_t Align>
-      class type_with_alignment 
+      class type_with_alignment
          : public type_with_alignment_imp<Align>
       {/**/};
 
-      static const unsigned int alignment_of_max_align = ::ttl::meta::type_traits::<max_align>::value;
+      static const unsigned int alignment_of_max_align = ::ttl::meta::type_traits::alignment_of<max_align>::value;
 
       template <unsigned int size, unsigned int alignment>
       struct aligned_storage_imp
@@ -222,9 +222,9 @@ namespace ttl{namespace mem{namespace type_traits{
             char buf[size];
 
             typename ::ttl::meta::if_c<
-               alignment == unsigned int(-1)
-               , max_align
-               , typename type_with_alignment<alignment>::type
+              (alignment == (unsigned int)-1)
+            , max_align
+            , typename type_with_alignment<alignment>::type
             >::type align_;
          } data_;
          void* address() const { return const_cast<aligned_storage_imp*>(this); }
@@ -236,24 +236,24 @@ namespace ttl{namespace mem{namespace type_traits{
          void* address() const { return 0; }
       };
 
-      template <unsigned int size_, unsigned int alignment_ = unsigned int(-1)>
+      template <unsigned int size_, unsigned int alignment_ = (unsigned int)-1>
       class aligned_storage_ : private aligned_storage_imp<size_, alignment_>
       {
-      public: 
+      public:
          typedef aligned_storage_imp<size_, alignment_> type;
          static const unsigned int size = size_;
-         static const unsigned int alignment = ( alignment_ == unsigned int(-1) ? alignment_of_max_align : alignment_ );
-      public: 
+         static const unsigned int alignment = ( alignment_ == (unsigned int)-1 ? alignment_of_max_align : alignment_ );
+      public:
          aligned_storage_(const aligned_storage_&);
          aligned_storage_& operator=(const aligned_storage_&);
-      public: 
+      public:
          aligned_storage_()
          {
          }
          ~aligned_storage_()
          {
          }
-      public: 
+      public:
          void* address()
          {
             return static_cast<type*>(this)->address();
@@ -265,7 +265,7 @@ namespace ttl{namespace mem{namespace type_traits{
       };
    }// namespace _align_storage_impl
 
-   template<unsigned int Len,unsigned int Align unsigned int(-1)>
+   template<unsigned int Len,unsigned int Align = (unsigned int)-1>
    struct aligned_storage : public _align_storage_impl::aligned_storage_<Len,Align>
    {/**/};
 }
