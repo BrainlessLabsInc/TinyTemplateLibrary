@@ -28,7 +28,7 @@
 // http://gustedt.wordpress.com/2012/01/02/emulating-c11-compiler-features-with-gcc-_generic/
 namespace ttl{namespace mem{namespace type_traits{
 
-   namespace _align_storage_impl{
+   namespace ttl_ns_impl{
       class alignment_dummy;
       typedef void (*function_ptr)();
       typedef int (alignment_dummy::*member_ptr);
@@ -263,10 +263,10 @@ namespace ttl{namespace mem{namespace type_traits{
             return static_cast<const type*>(this)->address();
          }
       };
-   }// namespace _align_storage_impl
+   }// namespace ttl_ns_impl
 
    template<unsigned int Len,unsigned int Align = (unsigned int)-1>
-   struct aligned_storage : public _align_storage_impl::aligned_storage_<Len,Align>
+   struct aligned_storage : public ttl_ns_impl::aligned_storage_<Len,Align>
    {/**/};
 }
 }

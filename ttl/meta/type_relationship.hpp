@@ -13,7 +13,7 @@ namespace ttl{namespace meta{namespace type_traits{
    struct is_same<Type,Type> : public true_type{};
 
    //is_convertible and is_baseof implementation
-   namespace _convertable_impl{
+   namespace ttl_ns_impl{
       typedef char First;
       struct Second{char _[2];};
       template<typename ToType>
@@ -80,17 +80,17 @@ namespace ttl{namespace meta{namespace type_traits{
          static bool const value = sizeof c(irval(), 0) == 2;
       };
       */
-   }// namespace _convertable_impl
+   }// namespace ttl_ns_impl
 
    template<typename FromType,typename ToType>
    struct is_convertible
-      :public integral_constant<bool,_convertable_impl::is_convertible_impl<FromType,ToType>::value>
+      :public integral_constant<bool,ttl_ns_impl::is_convertible_impl<FromType,ToType>::value>
    {/**/};
 
    // is_base_of
    template <typename BaseType, typename DerivedType>
    struct is_base_of_impl
-      :public integral_constant<bool,_convertable_impl::is_base_of_impl<BaseType,DerivedType>::value>
+      :public integral_constant<bool,ttl_ns_impl::is_base_of_impl<BaseType,DerivedType>::value>
    {/**/};
 }
 }

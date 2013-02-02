@@ -20,6 +20,9 @@
 #ifndef __TTL_ALIGNED_MEMORY_INCLUDED__
 #include <ttl/mem/aligned_memory.hpp>
 #endif
+#ifndef __TTL_MODIFY_PROPERTY_INCLUDED__
+#include <ttl/meta/modify_property.hpp>
+#endif
 
 namespace std{
    using namespace ::ttl::meta::type_traits;
