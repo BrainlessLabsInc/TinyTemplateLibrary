@@ -1,1 +1,4 @@
-Version 1.3.2
+Version 0.1
+-----------
+Changing the namespace to blib from ttl.
+All the author notice is intact, I do not want to take away their credit, but I do not want them to suffer for my mistakes :) and also I will be doing other changes for using this in my projects.
