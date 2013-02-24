@@ -1,5 +1,5 @@
-#ifndef __TTL_IF_INCLUDED__
-#define __TTL_IF_INCLUDED__
+#ifndef __BLIB_IF_INCLUDED__
+#define __BLIB_IF_INCLUDED__
 
 namespace blib{namespace meta{
    template<bool Cond,typename IfType,typename ElseType>
@@ -16,4 +16,4 @@ namespace blib{namespace meta{
 }// namespace meta
 }// namespace blib
 
-#endif // __TTL_IF_INCLUDED__
+#endif // __BLIB_IF_INCLUDED__

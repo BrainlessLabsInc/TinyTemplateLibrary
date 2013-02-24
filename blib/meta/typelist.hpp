@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_typelist__hpp
-#define __ttl_typelist__hpp
+#ifndef __BLIB_typelist__hpp
+#define __BLIB_typelist__hpp
 
 #include "blib/config.hpp"
 #include "blib/data_holder.hpp"
@@ -32,10 +32,10 @@ struct exception : blib::exception
 namespace impl
 {
 	////////////////////////////////////////////////////////////
-	template< TTL_TPARAMS_DEF(TTL_MAX_TYPELIST_PARAMS, empty_type) >
+	template< BLIB_TPARAMS_DEF(BLIB_MAX_TYPELIST_PARAMS, empty_type) >
 	struct typelist_traits
 	{
-		typedef typelist_traits< TTL_ARGS_S(TTL_DEC(TTL_MAX_TYPELIST_PARAMS)) > tail;
+		typedef typelist_traits< BLIB_ARGS_S(BLIB_DEC(BLIB_MAX_TYPELIST_PARAMS)) > tail;
 
 		enum
 		{
@@ -49,7 +49,7 @@ namespace impl
 	};
 
 	template<>
-	struct typelist_traits< TTL_LIST_ITEMS(TTL_MAX_TYPELIST_PARAMS,empty_type) >
+	struct typelist_traits< BLIB_LIST_ITEMS(BLIB_MAX_TYPELIST_PARAMS,empty_type) >
 	{
 		typedef empty_type tail;
 		enum
@@ -61,7 +61,7 @@ namespace impl
 	
 	////////////////////////////////////////////////////////////
 	//
-	//Instantiate TTL_MAX_TYPELIST_PARAMS get<> templates
+	//Instantiate BLIB_MAX_TYPELIST_PARAMS get<> templates
 	//	template<typename T>  struct get<T, 0>
 	//	{ 
 	//		enum { index = 0 };			
@@ -77,20 +77,20 @@ namespace impl
 	//
 	
 	template< typename T, int N > struct get;
-	#define TTL_META_TYPELIST_GET(n, t) template<typename T>  struct get<T, TTL_CNTDEC_##n>  \
+	#define BLIB_META_TYPELIST_GET(n, t) template<typename T>  struct get<T, BLIB_CNTDEC_##n>  \
 	{ enum {index = n-1}; typedef typename T::t##n type; };
 	
-	TTL_REPEAT( TTL_MAX_TYPELIST_PARAMS, TTL_META_TYPELIST_GET, TTL_META_TYPELIST_GET, type )
+	BLIB_REPEAT( BLIB_MAX_TYPELIST_PARAMS, BLIB_META_TYPELIST_GET, BLIB_META_TYPELIST_GET, type )
 	
-	#undef TTL_META_TYPELIST_GET
+	#undef BLIB_META_TYPELIST_GET
 };
 
-	template < TTL_TPARAMS_DEF(TTL_MAX_TYPELIST_PARAMS, empty_type) >
+	template < BLIB_TPARAMS_DEF(BLIB_MAX_TYPELIST_PARAMS, empty_type) >
 	struct typelist
 	{
-		TTL_TYPEDEFS(TTL_MAX_TYPELIST_PARAMS)
+		BLIB_TYPEDEFS(BLIB_MAX_TYPELIST_PARAMS)
 		
-		typedef impl::typelist_traits< TTL_ARGS(TTL_MAX_TYPELIST_PARAMS) > list_traits;
+		typedef impl::typelist_traits< BLIB_ARGS(BLIB_MAX_TYPELIST_PARAMS) > list_traits;
 	
 		enum{ length = list_traits::length };
 		typedef typename list_traits::largest_type largest_type;

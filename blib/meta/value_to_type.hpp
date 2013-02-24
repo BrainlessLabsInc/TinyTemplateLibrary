@@ -1,5 +1,5 @@
-#ifndef __TTL_VALUE_TO_TYPE_INCLUDED__
-#define __TTL_VALUE_TO_TYPE_INCLUDED__
+#ifndef __BLIB_VALUE_TO_TYPE_INCLUDED__
+#define __BLIB_VALUE_TO_TYPE_INCLUDED__
 
 namespace blib{namespace meta{
 
@@ -54,4 +54,4 @@ namespace blib{namespace meta{
 }
 }
 
-#endif // __TTL_VALUE_TO_TYPE_INCLUDED__
+#endif // __BLIB_VALUE_TO_TYPE_INCLUDED__

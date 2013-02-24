@@ -1,5 +1,5 @@
-#ifndef __TTL_MODIFY_PROPERTY_INCLUDED__
-#define __TTL_MODIFY_PROPERTY_INCLUDED__
+#ifndef __BLIB_MODIFY_PROPERTY_INCLUDED__
+#define __BLIB_MODIFY_PROPERTY_INCLUDED__
 
 namespace blib{namespace meta{namespace type_traits{
 
@@ -149,5 +149,5 @@ namespace blib{namespace meta{namespace type_traits{
 }
 }
 
-#endif// __TTL_MODIFY_PROPERTY_INCLUDED__
+#endif// __BLIB_MODIFY_PROPERTY_INCLUDED__
 

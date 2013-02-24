@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_tup_tuple__hpp
-#define __ttl_tup_tuple__hpp
+#ifndef __BLIB_tup_tuple__hpp
+#define __BLIB_tup_tuple__hpp
 
 #include "blib/config.hpp"
 #include "blib/data_holder.hpp"
@@ -23,13 +23,13 @@ namespace tup
 namespace impl
 {
 
-#define TTL_TUPLE_CALL_PARAM(n,p) typename tuple_param<types,N+n>::type p##n,
-#define TTL_TUPLE_CALL_PARAM_END(n,p) typename tuple_param<types,N+n>::type p##n
-#define TTL_TUPLE_CALL_PARAMS(n,p) TTL_REPEAT(n, TTL_TUPLE_CALL_PARAM, TTL_TUPLE_CALL_PARAM_END, p)
+#define BLIB_TUPLE_CALL_PARAM(n,p) typename tuple_param<types,N+n>::type p##n,
+#define BLIB_TUPLE_CALL_PARAM_END(n,p) typename tuple_param<types,N+n>::type p##n
+#define BLIB_TUPLE_CALL_PARAMS(n,p) BLIB_REPEAT(n, BLIB_TUPLE_CALL_PARAM, BLIB_TUPLE_CALL_PARAM_END, p)
 	
-#define TTL_TUPLE_CTOR(n,p) tuple_data( TTL_TUPLE_CALL_PARAMS(n,p) ) : \
+#define BLIB_TUPLE_CTOR(n,p) tuple_data( BLIB_TUPLE_CALL_PARAMS(n,p) ) : \
 					head_(p1), \
-					tail_( TTL_ARGS_SX(TTL_DEC(n),p) ) {}
+					tail_( BLIB_ARGS_SX(BLIB_DEC(n),p) ) {}
 	
 		template< typename Types, int N, bool Stop = (N > meta::length<Types>::value) >
 		struct tuple_param
@@ -52,7 +52,7 @@ namespace impl
 			tuple_data<types, N+1> tail_;
 			
 			tuple_data() {}
-			TTL_REPEAT_NEST( TTL_MAX_TUPLE_PARAMS, TTL_TUPLE_CTOR, TTL_TUPLE_CTOR, p )
+			BLIB_REPEAT_NEST( BLIB_MAX_TUPLE_PARAMS, BLIB_TUPLE_CTOR, BLIB_TUPLE_CTOR, p )
 			tuple_data( const this_t& r ) : head_(r.head_), tail_(r.tail_) {}
 			
 			this_t& operator=( const this_t& r )
@@ -77,10 +77,10 @@ namespace impl
 			}
 		};
 		
-#undef TTL_TUPLE_CALL_PARAM
-#undef TTL_TUPLE_CALL_PARAM_END
-#undef TTL_TUPLE_CALL_PARAMS
-#undef TTL_TUPLE_CTOR
+#undef BLIB_TUPLE_CALL_PARAM
+#undef BLIB_TUPLE_CALL_PARAM_END
+#undef BLIB_TUPLE_CALL_PARAMS
+#undef BLIB_TUPLE_CTOR
 	
 	template< typename R, int N >
 	struct get_field
@@ -106,17 +106,17 @@ namespace impl
 };  //impl namespace
 
 
-#define TTL_TUPLE_CALL_PARAM(n,p) typename tup::impl::tuple_param<types,n>::type p##n,
-#define TTL_TUPLE_CALL_PARAM_END(n,p) typename tup::impl::tuple_param<types,n>::type p##n
-#define TTL_TUPLE_CALL_PARAMS(n,p) TTL_REPEAT(n, TTL_TUPLE_CALL_PARAM, TTL_TUPLE_CALL_PARAM_END, p)
+#define BLIB_TUPLE_CALL_PARAM(n,p) typename tup::impl::tuple_param<types,n>::type p##n,
+#define BLIB_TUPLE_CALL_PARAM_END(n,p) typename tup::impl::tuple_param<types,n>::type p##n
+#define BLIB_TUPLE_CALL_PARAMS(n,p) BLIB_REPEAT(n, BLIB_TUPLE_CALL_PARAM, BLIB_TUPLE_CALL_PARAM_END, p)
 
-#define TTL_TUPLE_CTOR(n,p) tuple( TTL_TUPLE_CALL_PARAMS(n,p) ) : base(TTL_ARGSX(n,p)) {}
+#define BLIB_TUPLE_CTOR(n,p) tuple( BLIB_TUPLE_CALL_PARAMS(n,p) ) : base(BLIB_ARGSX(n,p)) {}
 
 
-	template< TTL_TPARAMS_DEF(TTL_MAX_TUPLE_PARAMS, empty_type) >
-	struct tuple : tup::impl::tuple_data< meta::typelist< TTL_ARGS(TTL_MAX_TUPLE_PARAMS) > >
+	template< BLIB_TPARAMS_DEF(BLIB_MAX_TUPLE_PARAMS, empty_type) >
+	struct tuple : tup::impl::tuple_data< meta::typelist< BLIB_ARGS(BLIB_MAX_TUPLE_PARAMS) > >
 	{
-		typedef meta::typelist< TTL_ARGS(TTL_MAX_TUPLE_PARAMS) > types;
+		typedef meta::typelist< BLIB_ARGS(BLIB_MAX_TUPLE_PARAMS) > types;
 		typedef tup::impl::tuple_data< types > base;
 		
 		template<int N>
@@ -132,7 +132,7 @@ namespace impl
 		};
 		
 		tuple() {}
-		TTL_REPEAT_NEST( TTL_MAX_TUPLE_PARAMS, TTL_TUPLE_CTOR, TTL_TUPLE_CTOR, p )
+		BLIB_REPEAT_NEST( BLIB_MAX_TUPLE_PARAMS, BLIB_TUPLE_CTOR, BLIB_TUPLE_CTOR, p )
 	
 		tuple( const base& r ) : base(r) {}
 
@@ -143,10 +143,10 @@ namespace impl
 		}
 	};
 	
-#undef TTL_TUPLE_CALL_PARAM
-#undef TTL_TUPLE_CALL_PARAM_END
-#undef TTL_TUPLE_CALL_PARAMS
-#undef TTL_TUPLE_CTOR
+#undef BLIB_TUPLE_CALL_PARAM
+#undef BLIB_TUPLE_CALL_PARAM_END
+#undef BLIB_TUPLE_CALL_PARAMS
+#undef BLIB_TUPLE_CTOR
 
 
 template< typename T >

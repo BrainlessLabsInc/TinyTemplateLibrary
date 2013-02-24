@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_flg_flags__hpp
-#define __ttl_flg_flags__hpp
+#ifndef __BLIB_flg_flags__hpp
+#define __BLIB_flg_flags__hpp
 
 #include <algorithm>
 

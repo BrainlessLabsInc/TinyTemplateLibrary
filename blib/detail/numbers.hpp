@@ -1,5 +1,5 @@
-#ifndef __TTL_NUMBERS_INCLUDED__
-#define __TTL_NUMBERS_INCLUDED__
+#ifndef __BLIB_NUMBERS_INCLUDED__
+#define __BLIB_NUMBERS_INCLUDED__
 
 namespace blib{namespace details{namespace numbers{
 
@@ -21,4 +21,4 @@ namespace blib{namespace details{namespace numbers{
 }
 }
 
-#endif// __TTL_NUMBERS_INCLUDED__
+#endif// __BLIB_NUMBERS_INCLUDED__

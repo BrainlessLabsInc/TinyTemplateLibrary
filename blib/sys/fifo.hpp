@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_fifo__hpp
-#define __ttl_fifo__hpp
+#ifndef __BLIB_fifo__hpp
+#define __BLIB_fifo__hpp
 
 #include "blib/config.hpp"
 
@@ -131,6 +131,6 @@ namespace sys
 }; //sys
 }; //ttl
 
-#endif //__ttl_fifo__hpp
+#endif //__BLIB_fifo__hpp
 
 

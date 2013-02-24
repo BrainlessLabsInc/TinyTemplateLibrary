@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_fsm_util__hpp
-#define __ttl_fsm_util__hpp
+#ifndef __BLIB_fsm_util__hpp
+#define __BLIB_fsm_util__hpp
 
 
 namespace blib
@@ -67,5 +67,5 @@ namespace fsm
 }; //fsm
 }; //ttl
 
-#endif //__ttl_fsm_util__hpp
+#endif //__BLIB_fsm_util__hpp
 

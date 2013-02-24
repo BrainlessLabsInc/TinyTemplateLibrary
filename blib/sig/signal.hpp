@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_signal__hpp
-#define __ttl_signal__hpp
+#ifndef __BLIB_signal__hpp
+#define __BLIB_signal__hpp
 
 #include <list>
 #include "blib/func/function.hpp"
@@ -159,10 +159,10 @@ namespace impl
 };  //impl
 
 
-	template < typename R, TTL_TPARAMS_DEF(TTL_MAX_FUNCTION_PARAMS, empty_type) >
-	struct signal : impl::signal_base< func::function<R,TTL_ARGS(TTL_MAX_FUNCTION_PARAMS) > >
+	template < typename R, BLIB_TPARAMS_DEF(BLIB_MAX_FUNCTION_PARAMS, empty_type) >
+	struct signal : impl::signal_base< func::function<R,BLIB_ARGS(BLIB_MAX_FUNCTION_PARAMS) > >
 	{
-		typedef func::function< R,TTL_ARGS(TTL_MAX_FUNCTION_PARAMS) > slot_type;
+		typedef func::function< R,BLIB_ARGS(BLIB_MAX_FUNCTION_PARAMS) > slot_type;
 		typedef impl::signal_base<slot_type> base_t;
 		typedef typename base_t::list list;
 		
@@ -199,168 +199,168 @@ namespace impl
 		*/
 	};
 
-#define TTL_SIG_BUILD_SIGNAL(n) \
+#define BLIB_SIG_BUILD_SIGNAL(n) \
 		typedef impl::signal_base<slot_type> base_t; \
 		typedef typename base_t::list list; \
-		void operator()(TTL_FUNC_PARAMS(n,p)) \
+		void operator()(BLIB_FUNC_PARAMS(n,p)) \
 		{ \
 			typename list::const_iterator it;  \
 			for( it = base_t::con_.begin(); it != base_t::con_.end(); ++it ) \
 			{ \
-				(*it)->f_(TTL_ENUM_ITEMS(n,p)); \
+				(*it)->f_(BLIB_ENUM_ITEMS(n,p)); \
 			} \
 		} 
 
 /*
-#define TTL_SIG_BUILD_SIGNAL(n) \
+#define BLIB_SIG_BUILD_SIGNAL(n) \
 		typedef impl::signal_base<slot_type> base_t; \
 		typedef typename base_t::list list; \
 		typedef typename base_t::connection_holder connection_holder;  \
 		typedef typename list::const_iterator const_iterator;  \
 		inline blib::sig::connection first() const { return blib::sig::connection(*con_.begin()); }  \
 		inline blib::sig::connection last() const { return blib::sig::connection(*--con_.end()); }  \
-		void operator()(TTL_FUNC_PARAMS(n,p)) \
+		void operator()(BLIB_FUNC_PARAMS(n,p)) \
 		{ \
-			call( con_.begin(), con_.end(), TTL_ENUM_ITEMS(n,p) );  \
+			call( con_.begin(), con_.end(), BLIB_ENUM_ITEMS(n,p) );  \
 		}  \
-		void operator()( const blib::sig::connection& first, const blib::sig::connection& end, TTL_FUNC_PARAMS(n,p) )  \
+		void operator()( const blib::sig::connection& first, const blib::sig::connection& end, BLIB_FUNC_PARAMS(n,p) )  \
 		{  \
 			const_iterator it_first( static_cast<const connection_holder*>(first.get_holder())->it_ );  \
 			const_iterator it_end( static_cast<const connection_holder*>(end.get_holder())->it_ );  \
-			call( it_first, ++it_end, TTL_ENUM_ITEMS(n,p) );  \
+			call( it_first, ++it_end, BLIB_ENUM_ITEMS(n,p) );  \
 		}  \
 		protected:  \
-		void call( const const_iterator& first, const const_iterator& end, TTL_FUNC_PARAMS(n,p) )  \
+		void call( const const_iterator& first, const const_iterator& end, BLIB_FUNC_PARAMS(n,p) )  \
 		{ \
 			for( const_iterator it = first; it != end; ++it ) \
 			{ \
-				(*it)->f_(TTL_ENUM_ITEMS(n,p)); \
+				(*it)->f_(BLIB_ENUM_ITEMS(n,p)); \
 			} \
 		}
 */
 		
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(1)), T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(1)), T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(1)), T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(1)), T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(1)), T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(1)
+		typedef func::function<R (BLIB_ARGS(1)), T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(1)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(2)), T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(2)), T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(2)), T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(2)), T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(2)), T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(2)
+		typedef func::function<R (BLIB_ARGS(2)), T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(2)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(3)), T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(3)), T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(3)), T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(3)), T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(3)), T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(3)
+		typedef func::function<R (BLIB_ARGS(3)), T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(3)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(4)), T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(4)), T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(4)), T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(4)), T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(4)), T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(4)
+		typedef func::function<R (BLIB_ARGS(4)), T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(4)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(5)), T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(5)), T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(5)), T6, T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(5)), T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(5)), T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(5)
+		typedef func::function<R (BLIB_ARGS(5)), T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(5)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(6)), T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(6)), T7, T8, T9, T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(6)), T7, T8, T9, T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(6)), T7, T8, T9, T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(6)), T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(6)
+		typedef func::function<R (BLIB_ARGS(6)), T7, T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(6)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(7)), T8, T9, T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(7)), T8, T9, T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(7)), T8, T9, T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(7)), T8, T9, T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(7)), T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(7)
+		typedef func::function<R (BLIB_ARGS(7)), T8, T9, T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(7)
 	};
 
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(8)), T9, T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(8)), T9, T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(8)), T9, T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(8)), T9, T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(8)), T9, T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(8)
+		typedef func::function<R (BLIB_ARGS(8)), T9, T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(8)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(9)), T10, T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(9)), T10, T11, T12, T13, T14, T15> >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(9)), T10, T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(9)), T10, T11, T12, T13, T14, T15> >
 	{
-		typedef func::function<R (TTL_ARGS(9)), T10, T11, T12, T13, T14, T15> slot_type;
-		TTL_SIG_BUILD_SIGNAL(9)
+		typedef func::function<R (BLIB_ARGS(9)), T10, T11, T12, T13, T14, T15> slot_type;
+		BLIB_SIG_BUILD_SIGNAL(9)
 	};
 
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(10)), T11, T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(10)), T11, T12, T13, T14, T15 > >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(10)), T11, T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(10)), T11, T12, T13, T14, T15 > >
 	{
-		typedef func::function< R (TTL_ARGS(10)), T11, T12, T13, T14, T15 > slot_type;
-		TTL_SIG_BUILD_SIGNAL(10)
+		typedef func::function< R (BLIB_ARGS(10)), T11, T12, T13, T14, T15 > slot_type;
+		BLIB_SIG_BUILD_SIGNAL(10)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(11)), T12, T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(11)), T12, T13, T14, T15 > >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(11)), T12, T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(11)), T12, T13, T14, T15 > >
 	{
-		typedef func::function< R (TTL_ARGS(11)), T12, T13, T14, T15 > slot_type;
-		TTL_SIG_BUILD_SIGNAL(11)
+		typedef func::function< R (BLIB_ARGS(11)), T12, T13, T14, T15 > slot_type;
+		BLIB_SIG_BUILD_SIGNAL(11)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(12)), T13, T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(12)), T13, T14, T15 > >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(12)), T13, T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(12)), T13, T14, T15 > >
 	{
-		typedef func::function< R (TTL_ARGS(12)), T13, T14, T15 > slot_type;
-		TTL_SIG_BUILD_SIGNAL(12)
+		typedef func::function< R (BLIB_ARGS(12)), T13, T14, T15 > slot_type;
+		BLIB_SIG_BUILD_SIGNAL(12)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(13)), T14, T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(13)), T14, T15 > >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(13)), T14, T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(13)), T14, T15 > >
 	{
-		typedef func::function< R (TTL_ARGS(13)), T14, T15 > slot_type;
-		TTL_SIG_BUILD_SIGNAL(13)
+		typedef func::function< R (BLIB_ARGS(13)), T14, T15 > slot_type;
+		BLIB_SIG_BUILD_SIGNAL(13)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(14)), T15 > : 
-		impl::signal_base< func::function<R (TTL_ARGS(14)), T15 > >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(14)), T15 > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(14)), T15 > >
 	{
-		typedef func::function< R (TTL_ARGS(14)), T15 > slot_type;
-		TTL_SIG_BUILD_SIGNAL(14)
+		typedef func::function< R (BLIB_ARGS(14)), T15 > slot_type;
+		BLIB_SIG_BUILD_SIGNAL(14)
 	};
 	
-	template < typename R, TTL_TPARAMS(TTL_MAX_FUNCTION_PARAMS) >
-	struct signal<R (TTL_ARGS(15)) > : 
-		impl::signal_base< func::function<R (TTL_ARGS(15)) > >
+	template < typename R, BLIB_TPARAMS(BLIB_MAX_FUNCTION_PARAMS) >
+	struct signal<R (BLIB_ARGS(15)) > : 
+		impl::signal_base< func::function<R (BLIB_ARGS(15)) > >
 	{
-		typedef func::function< R (TTL_ARGS(15)) > slot_type;
-		TTL_SIG_BUILD_SIGNAL(15)
+		typedef func::function< R (BLIB_ARGS(15)) > slot_type;
+		BLIB_SIG_BUILD_SIGNAL(15)
 	};
 	
 }; //sig
 }; //ttl
 
-#endif //__ttl_signal__hpp
+#endif //__BLIB_signal__hpp

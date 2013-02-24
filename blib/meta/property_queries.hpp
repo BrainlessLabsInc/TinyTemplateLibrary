@@ -1,13 +1,13 @@
-#ifndef __TTL_PROPERTY_QUERIES_INCLUDED__
-#define __TTL_PROPERTY_QUERIES_INCLUDED__
+#ifndef __BLIB_PROPERTY_QUERIES_INCLUDED__
+#define __BLIB_PROPERTY_QUERIES_INCLUDED__
 
-#ifndef __TTL_TYPE_RELATIONSHIP_INCLUDED__
+#ifndef __BLIB_TYPE_RELATIONSHIP_INCLUDED__
 #include <blib/meta/type_relationship.hpp>
 #endif
-#ifndef __TTL_MODIFY_PROPERTY_INCLUDED__
+#ifndef __BLIB_MODIFY_PROPERTY_INCLUDED__
 #include <blib/meta/modify_property.hpp>
 #endif
-#ifndef __TTL_VALUE_TO_TYPE_INCLUDED__
+#ifndef __BLIB_VALUE_TO_TYPE_INCLUDED__
 #include <blib/meta/value_to_type.hpp>
 #endif
 
@@ -288,4 +288,4 @@ namespace blib{namespace meta{namespace type_traits{
 }
 }
 
-#endif// __TTL_PROPERTY_QUERIES_INCLUDED__
+#endif// __BLIB_PROPERTY_QUERIES_INCLUDED__

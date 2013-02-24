@@ -12,8 +12,8 @@
 // variant cannot have 'const' types
 // since we are using data_holder, the alignment should not be an issue...?
 
-#ifndef __ttl_variant__hpp
-#define __ttl_variant__hpp
+#ifndef __BLIB_variant__hpp
+#define __BLIB_variant__hpp
 
 #include "blib/meta/typelist.hpp"
 #include "blib/meta/is_reference.hpp"
@@ -108,11 +108,11 @@ namespace impl
 	
 	
 ///////////////////////////////////////////////////////////////////////	
-	template< TTL_TPARAMS_DEF(TTL_MAX_TYPELIST_PARAMS, empty_type) >
+	template< BLIB_TPARAMS_DEF(BLIB_MAX_TYPELIST_PARAMS, empty_type) >
 	struct variant
 	{
 		typedef variant this_t;
-		typedef meta::typelist< TTL_ARGS(TTL_MAX_TYPELIST_PARAMS) > list;
+		typedef meta::typelist< BLIB_ARGS(BLIB_MAX_TYPELIST_PARAMS) > list;
 		
 		enum
 		{

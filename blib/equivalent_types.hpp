@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_equivalent_type__hpp
-#define __ttl_equivalent_type__hpp
+#ifndef __BLIB_equivalent_type__hpp
+#define __BLIB_equivalent_type__hpp
 
 namespace blib
 {
@@ -47,4 +47,4 @@ namespace blib
 	};
 };
 
-#endif //__ttl_equivalent_type__hpp
+#endif //__BLIB_equivalent_type__hpp

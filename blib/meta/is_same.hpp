@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_meta_is_same__hpp
-#define __ttl_meta_is_same__hpp
+#ifndef __BLIB_meta_is_same__hpp
+#define __BLIB_meta_is_same__hpp
 
 namespace blib
 {

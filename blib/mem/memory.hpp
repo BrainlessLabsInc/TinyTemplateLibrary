@@ -8,18 +8,18 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __TTL_MEMORY_INCLUDED__
-#define __TTL_MEMORY_INCLUDED__
+#ifndef __BLIB_MEMORY_INCLUDED__
+#define __BLIB_MEMORY_INCLUDED__
 
-#ifndef __TTL_COMPILER_CONFIG_INCLUDED__
+#ifndef __BLIB_COMPILER_CONFIG_INCLUDED__
 #include <blib/config/compiler_config.hpp>
 #endif
 
-#ifndef __TTL_CONFIG_INCLUDED__
+#ifndef __BLIB_CONFIG_INCLUDED__
 #include <blib/config.hpp>
 #endif
 
-#ifndef __TTL_EXCEPTION_INCLUDED__
+#ifndef __BLIB_EXCEPTION_INCLUDED__
 #include <blib/exception.hpp>
 #endif
 
@@ -165,9 +165,9 @@ namespace blib{namespace mem{
    void* aligned_malloc(size_t size, size_t alignment)
    {
       void* retVal = NULL;
-#if defined(TTL_MSVC)
+#if defined(BLIB_MSVC)
       retVal = _aligned_malloc(size,alignment);
-#elif defined(TTL_GCC)
+#elif defined(BLIB_GCC)
    #if (_POSIX_C_SOURCE >= 200112L) || (_XOPEN_SOURCE >= 600)
       posix_memalign(&retVal,alignment,size);
    #else
@@ -182,9 +182,9 @@ namespace blib{namespace mem{
       {
          return;
       }
-#if defined(TTL_MSVC)
+#if defined(BLIB_MSVC)
       _aligned_free(mem);
-#elif defined(TTL_GCC)
+#elif defined(BLIB_GCC)
    #if (_POSIX_C_SOURCE >= 200112L) || (_XOPEN_SOURCE >= 600)
       free(mem);
    #else
@@ -195,4 +195,4 @@ namespace blib{namespace mem{
 }
 }
 
-#endif// __TTL_MEMORY_INCLUDED__
+#endif// __BLIB_MEMORY_INCLUDED__

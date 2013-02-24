@@ -1,24 +1,24 @@
-#ifndef __TTL_ALIGNED_MEMORY_INCLUDED__
-#define __TTL_ALIGNED_MEMORY_INCLUDED__
+#ifndef __BLIB_ALIGNED_MEMORY_INCLUDED__
+#define __BLIB_ALIGNED_MEMORY_INCLUDED__
 
-#ifndef __TTL_IF_INCLUDED__
+#ifndef __BLIB_IF_INCLUDED__
 #include <blib/meta/if.hpp>
 #endif
 
-#ifndef __TTL_COMPILER_CONFIG_INCLUDED__
+#ifndef __BLIB_COMPILER_CONFIG_INCLUDED__
 #include <blib/config/compiler_config.hpp>
 #endif
 
-#ifndef __TTL_PROPERTY_QUERIES_INCLUDED__
+#ifndef __BLIB_PROPERTY_QUERIES_INCLUDED__
 #include <blib/meta/property_queries.hpp>
 #endif
 
 // http://msdn.microsoft.com/en-us/library/83ythb65%28v=vs.90%29.aspx
 // http://stackoverflow.com/questions/7895869/cross-platform-alignx-macro
 // Credited to Sebastian Cabot
-#if defined(TTL_MSVC)
+#if defined(BLIB_MSVC)
 #define _ALIGNED(x) __declspec(align(x))
-#elif defined(TTL_GCC)
+#elif defined(BLIB_GCC)
 #define _ALIGNED(x) __attribute__ ((aligned(x)))
 #endif
 #define _ALIGNED_TYPE(t,x) typedef t _ALIGNED(x)
@@ -272,4 +272,4 @@ namespace blib{namespace mem{namespace type_traits{
 }
 }
 
-#endif// __TTL_ALIGNED_MEMORY_INCLUDED__
+#endif// __BLIB_ALIGNED_MEMORY_INCLUDED__

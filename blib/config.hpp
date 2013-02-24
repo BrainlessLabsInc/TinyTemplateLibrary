@@ -8,10 +8,10 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 // Modified by: Shakti Misra (2013-)
-#ifndef __TTL_CONFIG_INCLUDED__
-#define __TTL_CONFIG_INCLUDED__
+#ifndef __BLIB_CONFIG_INCLUDED__
+#define __BLIB_CONFIG_INCLUDED__
 
-#ifndef __TTL_COMPILER_CONFIG_INCLUDED__
+#ifndef __BLIB_COMPILER_CONFIG_INCLUDED__
 #include <blib/config/compiler_config.hpp>
 #endif
 
@@ -45,17 +45,17 @@
 #include <assert.h>
 #endif
 
-#if defined(TTL_MSVC)
-#	define TTL_MAX_TEMPLATE_PARAMS 25
-#elif defined(TTL_GCC)
-#	define TTL_MAX_TEMPLATE_PARAMS 25
+#if defined(BLIB_MSVC)
+#	define BLIB_MAX_TEMPLATE_PARAMS 25
+#elif defined(BLIB_GCC)
+#	define BLIB_MAX_TEMPLATE_PARAMS 25
 #else
-#	define TTL_MAX_TEMPLATE_PARAMS 25
+#	define BLIB_MAX_TEMPLATE_PARAMS 25
 #endif
 
-#define TTL_MAX_TYPELIST_PARAMS TTL_MAX_TEMPLATE_PARAMS
-#define TTL_MAX_TUPLE_PARAMS 15
-#define TTL_MAX_NAMED_PARAMS TTL_MAX_TUPLE_PARAMS
+#define BLIB_MAX_TYPELIST_PARAMS BLIB_MAX_TEMPLATE_PARAMS
+#define BLIB_MAX_TUPLE_PARAMS 15
+#define BLIB_MAX_NAMED_PARAMS BLIB_MAX_TUPLE_PARAMS
 
 namespace blib
 {
@@ -83,4 +83,4 @@ namespace blib
 };
 
 
-#endif// __TTL_CONFIG_INCLUDED__
+#endif// __BLIB_CONFIG_INCLUDED__

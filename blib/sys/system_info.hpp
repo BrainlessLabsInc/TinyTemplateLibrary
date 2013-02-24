@@ -1,0 +1,543 @@
+#ifndef __BLIB_SYSTEM_INFO_INCLUDED__
+#define __BLIB_SYSTEM_INFO_INCLUDED__
+
+#ifndef BOOST_CONFIG_HPP
+#include <boost/config.hpp>
+#endif
+#ifndef __BLIB_PLATFORM_CONFIG_INCLUDED__
+#include <blib/config/platform_config.hpp>
+#endif
+#ifndef __BLIB_SINGLETON_INCLUDED__
+#include <blib/idioms/Sigleton.hpp>
+#endif
+#ifndef BOOST_HAS_STDINT_H
+#ifndef BOOST_CSTDINT_HPP
+#include <boost/cstdint.hpp>
+#endif
+#else
+#ifndef __STD_CSTDINT_INCLUDED__
+#define __STD_CSTDINT_INCLUDED__
+#include <cstdint>
+#endif
+#endif
+
+#if defined(BOOST_WINDOWS)
+#ifndef _WINDOWS_
+#include <windows.h>
+#endif
+#elif defined(__POSIX__)
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/statvfs.h>
+#include <sys/utsname.h>
+#endif
+/* Need to do this here because intrin.h has C++ code in it */
+/* Visual Studio 2005 has a bug where intrin.h conflicts with winnt.h */
+#if defined(_MSC_VER) && (_MSC_VER >= 1500)
+#include <intrin.h>
+#ifndef _WIN64
+#define __MMX__
+#define __3dNOW__
+#endif
+#define __SSE__
+#define __SSE2__
+#elif defined(__MINGW64_VERSION_MAJOR)
+#include <intrin.h>
+#else
+#ifdef __ALTIVEC__
+#if HAVE_ALTIVEC_H && !defined(__APPLE_ALTIVEC__)
+#include <altivec.h>
+#undef pixel
+#endif
+#endif
+#ifdef __MMX__
+#include <mmintrin.h>
+#endif
+#ifdef __3dNOW__
+#include <mm3dnow.h>
+#endif
+#ifdef __SSE__
+#include <xmmintrin.h>
+#endif
+#ifdef __SSE2__
+#include <emmintrin.h>
+#endif
+#endif
+#if defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))
+#include <sys/sysctl.h>         /* For AltiVec check */
+#elif defined(__OpenBSD__) && defined(__powerpc__)
+#include <sys/param.h>
+#include <sys/sysctl.h> /* For AltiVec check */
+#include <machine/cpu.h>
+#elif SDL_ALTIVEC_BLITTERS && HAVE_SETJMP
+#include <signal.h>
+#include <setjmp.h>
+#endif
+#include <blib/config/details/close_code.h>
+
+namespace blib{namespace system_info{
+
+   namespace cpu_info{
+
+      //! @brief X86/X64 CPU features.
+      enum Feature
+      {
+         //! @brief Cpu has RDTSC instruction.
+         kFeatureRDTSC = 0,
+         //! @brief Cpu has RDTSCP instruction.
+         kFeatureRDTSCP = 1,
+         //! @brief Cpu has CMOV instruction (conditional move)
+         kFeatureCMOV = 2,
+         //! @brief Cpu has CMPXCHG8B instruction
+         kFeatureCMPXCHG8B = 3,
+         //! @brief Cpu has CMPXCHG16B instruction (64 bit processors)
+         kFeatureCMPXCHG16B = 4,
+         //! @brief Cpu has CLFUSH instruction
+         kFeatureCLFLUSH = 5,
+         //! @brief Cpu has PREFETCH instruction
+         kFeaturekPREFETCH = 6,
+         //! @brief Cpu supports LAHF and SAHF instrictions.
+         kFeatureLAHFSAHF = 7,
+         //! @brief Cpu supports FXSAVE and FXRSTOR instructions.
+         kFeatureFXSR = 8,
+         //! @brief Cpu supports FXSAVE and FXRSTOR instruction optimizations (FFXSR).
+         kFeatureFFXSR = 9,
+
+         //! @brief Cpu has MMX.
+         kFeatureMMX = 10,
+         //! @brief Cpu has extended MMX.
+         kFeatureMMXExt = 11,
+         //! @brief Cpu has 3dNow!
+         kFeature3dNow = 12,
+         //! @brief Cpu has enchanced 3dNow!
+         kFeature3dNowExt = 13,
+         //! @brief Cpu has SSE.
+         kFeatureSSE = 14,
+         //! @brief Cpu has Misaligned SSE (MSSE).
+         kFeatureMSSE = 15,
+         //! @brief Cpu has SSE2.
+         kFeatureSSE2 = 16,
+         //! @brief Cpu has SSE3.
+         kFeatureSSE3 = 17,
+         //! @brief Cpu has Supplemental SSE3 (SSSE3).
+         kFeatureSSSE3 = 18,
+         //! @brief Cpu has SSE4.A.
+         kFeatureSSE4_A = 19,
+         //! @brief Cpu has SSE4.1.
+         kFeatureSSE4_1 = 20,
+         //! @brief Cpu has SSE4.2.
+         kFeatureSSE4_2 = 21,
+         //! @brief Cpu has SSE5.
+         kFeatureSSE5 = 22,
+         //! @brief Cpu supports MONITOR and MWAIT instructions.
+         kFeatureMonitorMWait = 23,
+         //! @brief Cpu supports POPCNT instruction.
+         kFeaturePOPCNT = 24,
+         //! @brief Cpu supports LZCNT instruction.
+         kFeatureLZCNT  = 25,
+         //! @brief Cpu supports multithreading.
+         kFeatureMultiThreading = 29,
+         //! @brief Cpu supports execute disable bit (execute protection).
+         kFeatureExecuteDisableBit = 30,
+         //! @brief Cpu supports 64 bits.
+         kFeature64Bit = 31
+      };
+      //! @brief Cpu vendor IDs.
+      //! Cpu vendor IDs are specific for AsmJit library. Vendor ID is not directly
+      //! read from cpuid result, instead it's based on CPU vendor string.
+      enum CpuVendorIds
+      {
+         //! @brief Intel CPU vendor.
+         kCpuIntel = 0,
+         //! @brief AMD CPU vendor.
+         kCpuAmd = 1,
+         //! @brief National Semiconductor CPU vendor (applies also to Cyrix processors).
+         kCpuNSM = 2,
+         //! @brief Transmeta CPU vendor.
+         kCpuTransmeta = 3,
+         //! @brief VIA CPU vendor.
+         kCpuVia = 4,
+         //! @brief Unknown CPU vendor.
+         kCpuUnknown = 666
+      };
+
+      //! @brief X86/X64 CPU bugs.
+      enum Bug
+      {
+         kBugAmdLockMB = 0
+      };
+      /* 
+      * This is a guess for the cacheline size used for padding.
+      * Most x86 processors have a 64 byte cache line.
+      * The 64-bit PowerPC processors have a 128 byte cache line.
+      * We'll use the larger value to be generally safe.
+      * Taken from SDL
+      */
+      class CPUInfoTraits
+      {
+      public:
+         typedef boost::uint32_t DefIntType;
+         static const DefIntType kDefaultCacheLineSize = 128;
+         static const DefIntType kVendorStringMaxSize = 16;
+         static const DefIntType kBrandStringMaxSize = 64;
+      };
+
+      struct CPUInfoHelper
+      {
+         static int numberOfProcessors()
+         {
+            int retVal = 1;
+#if defined(BOOST_WINDOWS)
+            SYSTEM_INFO info;
+            GetSystemInfo(&info);
+            retVal = info.dwNumberOfProcessors;
+#elif defined(__POSIX__) && defined(_SC_NPROCESSORS_ONLN)
+            // It seems that sysconf returns the number of "logical" processors on both
+            // mac and linux.  So we get the number of "online logical" processors.
+            const long num = sysconf(_SC_NPROCESSORS_ONLN);
+            if (-1 == res)
+               retVal = 1;
+
+            retVal = static_cast<UInt32>(num);
+#else
+            retVal = 1;
+#endif
+            return retVal;
+         }
+
+
+         static bool haveCPUID()
+         {
+            int retVal = 0;
+            /* *INDENT-OFF* */
+#if defined(__GNUC__) && defined(i386)
+            __asm__ (
+               "        pushfl                      # Get original EFLAGS             \n"
+               "        popl    %%eax                                                 \n"
+               "        movl    %%eax,%%ecx                                           \n"
+               "        xorl    $0x200000,%%eax     # Flip ID bit in EFLAGS           \n"
+               "        pushl   %%eax               # Save new EFLAGS value on stack  \n"
+               "        popfl                       # Replace current EFLAGS value    \n"
+               "        pushfl                      # Get new EFLAGS                  \n"
+               "        popl    %%eax               # Store new EFLAGS in EAX         \n"
+               "        xorl    %%ecx,%%eax         # Can not toggle ID bit,          \n"
+               "        jz      1f                  # Processor=80486                 \n"
+               "        movl    $1,%0               # We have CPUID support           \n"
+               "1:                                                                    \n"
+               : "=m" (retVal)
+               :
+            : "%eax", "%ecx"
+               );
+#elif defined(__GNUC__) && defined(__x86_64__)
+            /* Technically, if this is being compiled under __x86_64__ then it has 
+            CPUid by definition.  But it's nice to be able to prove it.  :)      */
+            __asm__ (
+               "        pushfq                      # Get original EFLAGS             \n"
+               "        popq    %%rax                                                 \n"
+               "        movq    %%rax,%%rcx                                           \n"
+               "        xorl    $0x200000,%%eax     # Flip ID bit in EFLAGS           \n"
+               "        pushq   %%rax               # Save new EFLAGS value on stack  \n"
+               "        popfq                       # Replace current EFLAGS value    \n"
+               "        pushfq                      # Get new EFLAGS                  \n"
+               "        popq    %%rax               # Store new EFLAGS in EAX         \n"
+               "        xorl    %%ecx,%%eax         # Can not toggle ID bit,          \n"
+               "        jz      1f                  # Processor=80486                 \n"
+               "        movl    $1,%0               # We have CPUID support           \n"
+               "1:                                                                    \n"
+               : "=m" (retVal)
+               :
+            : "%rax", "%rcx"
+               );
+#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
+            __asm {
+               pushfd                      ; Get original EFLAGS
+                  pop     eax
+                  mov     ecx, eax
+                  xor     eax, 200000h        ; Flip ID bit in EFLAGS
+                  push    eax                 ; Save new EFLAGS value on stack
+                  popfd                       ; Replace current EFLAGS value
+                  pushfd                      ; Get new EFLAGS
+                  pop     eax                 ; Store new EFLAGS in EAX
+                  xor     eax, ecx            ; Can not toggle ID bit,
+                  jz      done                ; Processor=80486
+                  mov     retVal,1         ; We have CPUID support
+done:
+            }
+#elif defined(__sun) && defined(__i386)
+            __asm (
+               "       pushfl                 \n"
+               "       popl    %eax           \n"
+               "       movl    %eax,%ecx      \n"
+               "       xorl    $0x200000,%eax \n"
+               "       pushl   %eax           \n"
+               "       popfl                  \n"
+               "       pushfl                 \n"
+               "       popl    %eax           \n"
+               "       xorl    %ecx,%eax      \n"
+               "       jz      1f             \n"
+               "       movl    $1,-8(%ebp)    \n"
+               "1:                            \n"
+               );
+#elif defined(__sun) && defined(__amd64)
+            __asm (
+               "       pushfq                 \n"
+               "       popq    %rax           \n"
+               "       movq    %rax,%rcx      \n"
+               "       xorl    $0x200000,%eax \n"
+               "       pushq   %rax           \n"
+               "       popfq                  \n"
+               "       pushfq                 \n"
+               "       popq    %rax           \n"
+               "       xorl    %ecx,%eax      \n"
+               "       jz      1f             \n"
+               "       movl    $1,-8(%rbp)    \n"
+               "1:                            \n"
+               );
+#endif
+            return static_cast<bool>(retVal);
+         }
+
+         static void cpuid(const int aFeature, int& a, int& b, int& c, int& d)
+         {
+#if defined(__GNUC__) && defined(i386)
+            __asm__ __volatile__( 
+               "        pushl %%ebx        \n" 
+               "        cpuid              \n" 
+               "        movl %%ebx, %%esi  \n" 
+               "        popl %%ebx         \n" : 
+            "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (aFeature))
+#elif defined(__GNUC__) && defined(__x86_64__)
+            __asm__ __volatile__( 
+               "        pushq %%rbx        \n" 
+               "        cpuid              \n" 
+               "        movq %%rbx, %%rsi  \n" 
+               "        popq %%rbx         \n" : 
+            "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (aFeature))
+#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
+            __asm
+            {
+               __asm mov eax, aFeature
+                  __asm cpuid 
+                  __asm mov a, eax 
+                  __asm mov b, ebx 
+                  __asm mov c, ecx 
+                  __asm mov d, edx 
+            }
+#else
+            a = b = c = d = 0
+#endif
+         }
+
+         static int getCPUIDFeatures()
+         {
+            int retVal = 0;
+            int a = 0, b = 0, c = 0, d = 0;
+
+            cpuid(0, a, b, c, d);
+            if (a >= 1)
+            {
+               cpuid(1, a, b, c, d);
+               retVal = d;
+            }
+            return retVal;
+         }
+
+         static bool haveRDTSC()
+         {
+            bool retVal = false;
+            if (haveCPUID())
+            {
+               retVal = getCPUIDFeatures() & 0x00000010;
+            }
+            return retVal;
+         }
+
+         int haveAltiVec()
+         {
+            volatile int altivec = 0;
+#if (defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))) || (defined(__OpenBSD__) && defined(__powerpc__))
+#ifdef __OpenBSD__
+            int selectors[2] = { CTL_MACHDEP, CPU_ALTIVEC };
+#else
+            int selectors[2] = { CTL_HW, HW_VECTORUNIT };
+#endif
+            int hasVectorUnit = 0;
+            size_t length = sizeof(hasVectorUnit);
+            int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0);
+            if (0 == error)
+               altivec = (hasVectorUnit != 0);
+#elif SDL_ALTIVEC_BLITTERS && HAVE_SETJMP
+            void (*handler) (int sig);
+            handler = signal(SIGILL, illegal_instruction);
+            if (setjmp(jmpbuf) == 0) {
+               asm volatile ("mtspr 256, %0\n\t" "vand %%v0, %%v0, %%v0"::"r" (-1));
+               altivec = 1;
+            }
+            signal(SIGILL, handler);
+#endif
+            return altivec;
+         }
+
+         static bool haveMMX()
+         {
+            bool retVal = false;
+            if (haveCPUID())
+            {
+               retVal = (CPU_getCPUIDFeatures() & 0x00800000);
+            }
+            return retVal;
+         }
+
+         static bool have3DNow()
+         {
+            bool retVal = false;
+            if (haveCPUID())
+            {
+               int a, b, c, d;
+               cpuid(0x80000000, a, b, c, d);
+               if (a >= 0x80000001)
+               {
+                  cpuid(0x80000001, a, b, c, d);
+                  retVal = (d & 0x80000000);
+               }
+            }
+            return retVal;
+         }
+
+         static bool have3DNow()
+         {
+            bool retVal = false;
+            if (haveCPUID())
+            {
+               int a, b, c, d;
+               cpuid(0x80000000, a, b, c, d);
+               if (a >= 0x80000001)
+               {
+                  cpuid(0x80000001, a, b, c, d);
+                  retVal = (d & 0x80000000);
+               }
+            }
+            return retVal;
+         }
+
+         static bool haveSSE()
+         {
+            bool retVal = false;
+            if (CPU_haveCPUID())
+            {
+               retVal = (getCPUIDFeatures() & 0x02000000);
+            }
+            return retVal;
+         }
+
+         static bool haveSSE2()
+         {
+            bool retVal = false;
+            if (haveCPUID())
+            {
+               retVal = (getCPUIDFeatures() & 0x04000000);
+            }
+            return retVal;
+         }
+
+         static bool haveSSE3()
+         {
+            bool retVal = false;
+            if (haveCPUID())
+            {
+               int a, b, c, d;
+               cpuid(0, a, b, c, d);
+               if (a >= 1)
+               {
+                  cpuid(1, a, b, c, d);
+                  retVal = (c & 0x00000001);
+               }
+            }
+            return retVal;
+         }
+
+         static bool haveSSE41()
+         {
+            bool retVal = false;
+            if (haveCPUID())
+            {
+               int a, b, c, d;
+               cpuid(1, a, b, c, d);
+               if (a >= 1)
+               {
+                  cpuid(1, a, b, c, d);
+                  retVal = (c & 0x00080000);
+               }
+            }
+            return retVal;
+         }
+
+         static bool haveSSE42()
+         {
+            bool retVal = false;
+            if (haveCPUID())
+            {
+               int a, b, c, d;
+               cpuid(1, a, b, c, d);
+               if (a >= 1)
+               {
+                  cpuid(1, a, b, c, d);
+                  retVal = (c & 0x00100000);
+               }
+            }
+            return retVal;
+         }
+      };
+
+      class CPUInfo : public blib::idioms::Singleton<CPUInfo>
+      {
+      public:
+         typedef CPUInfoTraits MyTraits;
+         typedef MyTraits::DefIntType IntType;
+      private:
+         //! @brief Cpu short vendor string.
+         char _vendorString[MyTraits::kVendorStringMaxSize];
+         //! @brief Cpu long vendor string (brand).
+         char _brandString[MyTraits::kBrandStringMaxSize];
+         //! @brief Cpu vendor id.
+         CpuVendorIds _vendorId;
+         //! @brief Cpu family ID.
+         IntType _family;
+         //! @brief Cpu model ID.
+         IntType _model;
+         //! @brief Cpu stepping.
+         IntType _stepping;
+         //! @brief Number of processors or cores.
+         IntType _numberOfProcessors;
+         //! @brief Cpu features bitfield, see @c Feature enum).
+         Feature _features;
+         //! @brief Cpu bugs bitfield, see @c Bug enum).
+         Bug _bugs;
+         //! @brief Cpu cacheline size.
+         IntType _cacheLineSize;
+         bool _hasCPUId;
+      public:
+         CPUInfo()
+            :_vendorId(0),_family(0),_model(0)
+            ,_stepping(0),_numberOfProcessors(1)
+            ,_features(0),_bugs(0),_hasCPUId(true)
+            ,_cacheLineSize(CPUInfoTraits::kDefaultCacheLineSize)
+         {
+            for(int i = 0;i < MyTraits::kVendorStringMaxSize; ++i)
+            {
+               _vendorString[i] = '\0';
+            }
+            for(int i = 0;i < MyTraits::kBrandStringMaxSize; ++i)
+            {
+               _brandString[i] = '\0';
+            }
+         }
+      };
+   }
+}
+}
+
+#endif //__BLIB_SYSTEM_INFO_INCLUDED__

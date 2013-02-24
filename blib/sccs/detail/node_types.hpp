@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_sccs_node_types_hpp
-#define __ttl_sccs_node_types_hpp
+#ifndef __BLIB_sccs_node_types_hpp
+#define __BLIB_sccs_node_types_hpp
 
 namespace blib
 {
@@ -112,6 +112,6 @@ namespace sccs
 }; //sccs
 }; //ttl
 
-#endif //__ttl_sccs_node_types_hpp
+#endif //__BLIB_sccs_node_types_hpp
 
 

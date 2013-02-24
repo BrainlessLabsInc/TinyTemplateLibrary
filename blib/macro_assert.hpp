@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_macro_assert__hpp
-#define __ttl_macro_assert__hpp
+#ifndef __BLIB_macro_assert__hpp
+#define __BLIB_macro_assert__hpp
 
 namespace blib
 {
@@ -23,6 +23,6 @@ namespace blib
 };
 
 
-#define TTL_ASSERT( c ) sizeof( blib::assert<c>::type );
+#define BLIB_ASSERT( c ) sizeof( blib::assert<c>::type );
 
 #endif //__macro_assert__hpp

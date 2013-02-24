@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_selector__hpp
-#define __ttl_selector__hpp
+#ifndef __BLIB_selector__hpp
+#define __BLIB_selector__hpp
 
 namespace blib
 {

@@ -1,7 +1,7 @@
-#ifndef __TTL_TYPE_RELATIONSHIP_INCLUDED__
-#define __TTL_TYPE_RELATIONSHIP_INCLUDED__
+#ifndef __BLIB_TYPE_RELATIONSHIP_INCLUDED__
+#define __BLIB_TYPE_RELATIONSHIP_INCLUDED__
 
-#ifndef __TTL_VALUE_TO_TYPE_INCLUDED__
+#ifndef __BLIB_VALUE_TO_TYPE_INCLUDED__
 #include <value_to_type.hpp>
 #endif
 
@@ -13,7 +13,7 @@ namespace blib{namespace meta{namespace type_traits{
    struct is_same<Type,Type> : public true_type{};
 
    //is_convertible and is_baseof implementation
-   namespace ttl_ns_impl{
+   namespace blib_ns_impl{
       typedef char First;
       struct Second{char _[2];};
       template<typename ToType>
@@ -80,19 +80,19 @@ namespace blib{namespace meta{namespace type_traits{
          static bool const value = sizeof c(irval(), 0) == 2;
       };
       */
-   }// namespace ttl_ns_impl
+   }// namespace blib_ns_impl
 
    template<typename FromType,typename ToType>
    struct is_convertible
-      :public integral_constant<bool,ttl_ns_impl::is_convertible_impl<FromType,ToType>::value>
+      :public integral_constant<bool,blib_ns_impl::is_convertible_impl<FromType,ToType>::value>
    {/**/};
 
    // is_base_of
    template <typename BaseType, typename DerivedType>
    struct is_base_of_impl
-      :public integral_constant<bool,ttl_ns_impl::is_base_of_impl<BaseType,DerivedType>::value>
+      :public integral_constant<bool,blib_ns_impl::is_base_of_impl<BaseType,DerivedType>::value>
    {/**/};
 }
 }
 }
-#endif// __TTL_TYPE_RELATIONSHIP_INCLUDED__
+#endif// __BLIB_TYPE_RELATIONSHIP_INCLUDED__

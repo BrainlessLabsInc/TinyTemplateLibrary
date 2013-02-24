@@ -1,5 +1,5 @@
-#ifndef __TTL_ENABLE_IF_INCLUDED__
-#define __TTL_ENABLE_IF_INCLUDED__
+#ifndef __BLIB_ENABLE_IF_INCLUDED__
+#define __BLIB_ENABLE_IF_INCLUDED__
 
 namespace blib{namespace meta{namespace type_traits{
    template<bool Cond,class Type=void>
@@ -15,4 +15,4 @@ namespace blib{namespace meta{namespace type_traits{
 }
 }
 }
-#endif// __TTL_ENABLE_IF_INCLUDED__
+#endif// __BLIB_ENABLE_IF_INCLUDED__

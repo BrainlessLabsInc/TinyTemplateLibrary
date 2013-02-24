@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_sccs_runtime_types_hpp
-#define __ttl_sccs_runtime_types_hpp
+#ifndef __BLIB_sccs_runtime_types_hpp
+#define __BLIB_sccs_runtime_types_hpp
 
 #include "boost/bind.hpp"
 

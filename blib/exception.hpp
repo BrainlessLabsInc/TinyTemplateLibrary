@@ -8,10 +8,10 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __TTL_EXCEPTION_INCLUDED__
-#define __TTL_EXCEPTION_INCLUDED__
+#ifndef __BLIB_EXCEPTION_INCLUDED__
+#define __BLIB_EXCEPTION_INCLUDED__
 
-#ifndef __TTL_CONFIG_INCLUDED__
+#ifndef __BLIB_CONFIG_INCLUDED__
 #include <blib/config.hpp>
 #endif
 
@@ -24,4 +24,4 @@ namespace blib
 	};
 };
 
-#endif //__TTL_EXCEPTION_INCLUDED__
+#endif //__BLIB_EXCEPTION_INCLUDED__

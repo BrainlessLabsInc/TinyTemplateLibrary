@@ -8,12 +8,12 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_macro_misc__hpp
-#define __ttl_macro_misc__hpp
+#ifndef __BLIB_macro_misc__hpp
+#define __BLIB_macro_misc__hpp
 
-#define TTL_RET(x) x
-#define TTL_APPEND( x, y ) TTL_APPEND1(x,y)
-#define TTL_APPEND1( x, y ) x ## y
+#define BLIB_RET(x) x
+#define BLIB_APPEND( x, y ) BLIB_APPEND1(x,y)
+#define BLIB_APPEND1( x, y ) x ## y
 
 
 #endif //__macro_misc__hpp

@@ -8,8 +8,8 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
-#ifndef __ttl_fsm__hpp
-#define __ttl_fsm__hpp
+#ifndef __BLIB_fsm__hpp
+#define __BLIB_fsm__hpp
 
 #include "blib/config.hpp"
 //#include "blib/meta/typelist.hpp"
@@ -543,5 +543,5 @@ namespace fsm
 #define FSM_EMPTY_EVENT_MAP() typedef boost::mpl::vector< > event_map;
 
 
-#endif //__ttl_fsm__hpp
+#endif //__BLIB_fsm__hpp
 
