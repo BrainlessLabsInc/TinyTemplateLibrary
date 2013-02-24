@@ -7,14 +7,16 @@ namespace blib{namespace idioms{
    class Singleton
    {
    public:
-      Type& instance()
+      static Type& instance()
       {
          static Type retType;
          return retType;
       }
-   private:
+   protected:
       Singleton();
-      Singleton& operator=();
+      ~Singleton();
+   private:
+      Singleton& operator=(const Singleton&);
       Singleton(const Singleton&);
    };
 }

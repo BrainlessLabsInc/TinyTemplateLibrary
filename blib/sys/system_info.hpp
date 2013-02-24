@@ -21,6 +21,19 @@
 #endif
 #endif
 
+#ifndef __STD_ALGORITHM_INCLUDED__
+#define __STD_ALGORITHM_INCLUDED__
+#include <algorithm>
+#endif
+#ifndef __STD_STRING_INCLUDED__
+#define __STD_STRING_INCLUDED__
+#include <string>
+#endif
+#ifndef __STD_BITSET_INCLUDED__
+#define __STD_BITSET_INCLUDED__
+#include <bitset>
+#endif
+
 #if defined(BOOST_WINDOWS)
 #ifndef _WINDOWS_
 #include <windows.h>
@@ -76,14 +89,13 @@
 #include <signal.h>
 #include <setjmp.h>
 #endif
-#include <blib/config/details/close_code.h>
 
 namespace blib{namespace system_info{
 
    namespace cpu_info{
 
       //! @brief X86/X64 CPU features.
-      enum Feature
+      enum FeatureBitIndex
       {
          //! @brief Cpu has RDTSC instruction.
          kFeatureRDTSC = 0,
@@ -143,12 +155,14 @@ namespace blib{namespace system_info{
          //! @brief Cpu supports execute disable bit (execute protection).
          kFeatureExecuteDisableBit = 30,
          //! @brief Cpu supports 64 bits.
-         kFeature64Bit = 31
+         kFeature64Bit = 31,
+         kFeatureEnd
       };
+
       //! @brief Cpu vendor IDs.
       //! Cpu vendor IDs are specific for AsmJit library. Vendor ID is not directly
       //! read from cpuid result, instead it's based on CPU vendor string.
-      enum CpuVendorIds
+      enum CpuVendorIdsBitIndex
       {
          //! @brief Intel CPU vendor.
          kCpuIntel = 0,
@@ -161,13 +175,15 @@ namespace blib{namespace system_info{
          //! @brief VIA CPU vendor.
          kCpuVia = 4,
          //! @brief Unknown CPU vendor.
-         kCpuUnknown = 666
+         kCpuIdEnd
       };
 
       //! @brief X86/X64 CPU bugs.
-      enum Bug
+      enum BugBitIndex
       {
-         kBugAmdLockMB = 0
+         kBugAmdLockMB = 0,
+         kNoBug = 1,
+         kBugEnd
       };
       /* 
       * This is a guess for the cacheline size used for padding.
@@ -191,7 +207,7 @@ namespace blib{namespace system_info{
          {
             int retVal = 1;
 #if defined(BOOST_WINDOWS)
-            SYSTEM_INFO info;
+            SYSTEM_INFO info = {0};
             GetSystemInfo(&info);
             retVal = info.dwNumberOfProcessors;
 #elif defined(__POSIX__) && defined(_SC_NPROCESSORS_ONLN)
@@ -202,8 +218,6 @@ namespace blib{namespace system_info{
                retVal = 1;
 
             retVal = static_cast<UInt32>(num);
-#else
-            retVal = 1;
 #endif
             return retVal;
          }
@@ -251,21 +265,21 @@ namespace blib{namespace system_info{
                :
             : "%rax", "%rcx"
                );
-#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
-            __asm {
-               pushfd                      ; Get original EFLAGS
-                  pop     eax
-                  mov     ecx, eax
-                  xor     eax, 200000h        ; Flip ID bit in EFLAGS
-                  push    eax                 ; Save new EFLAGS value on stack
-                  popfd                       ; Replace current EFLAGS value
-                  pushfd                      ; Get new EFLAGS
-                  pop     eax                 ; Store new EFLAGS in EAX
-                  xor     eax, ecx            ; Can not toggle ID bit,
-                  jz      done                ; Processor=80486
-                  mov     retVal,1         ; We have CPUID support
-done:
-            }
+//#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
+//            __asm {
+//               pushfd                      ; Get original EFLAGS
+//                  pop     eax
+//                  mov     ecx, eax
+//                  xor     eax, 200000h        ; Flip ID bit in EFLAGS
+//                  push    eax                 ; Save new EFLAGS value on stack
+//                  popfd                       ; Replace current EFLAGS value
+//                  pushfd                      ; Get new EFLAGS
+//                  pop     eax                 ; Store new EFLAGS in EAX
+//                  xor     eax, ecx            ; Can not toggle ID bit,
+//                  jz      done                ; Processor=80486
+//                  mov     retVal,1         ; We have CPUID support
+//done:
+//            }
 #elif defined(__sun) && defined(__i386)
             __asm (
                "       pushfl                 \n"
@@ -316,7 +330,17 @@ done:
                "        movq %%rbx, %%rsi  \n" 
                "        popq %%rbx         \n" : 
             "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (aFeature))
-#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
+//#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
+//            __asm
+//            {
+//               __asm mov eax, aFeature
+//                  __asm cpuid 
+//                  __asm mov a, eax 
+//                  __asm mov b, ebx 
+//                  __asm mov c, ecx 
+//                  __asm mov d, edx 
+//            }
+#elif defined(__WATCOMC__)
             __asm
             {
                __asm mov eax, aFeature
@@ -324,11 +348,54 @@ done:
                   __asm mov a, eax 
                   __asm mov b, ebx 
                   __asm mov c, ecx 
-                  __asm mov d, edx 
+                  __asm mov d, edx
+            }
+#elif defined(_MSC_VER) && (_MSC_VER > 1400)
+            {
+               int CPUInfo[4] = {0};
+               __cpuid(CPUInfo,aFeature);
+               a = CPUInfo[0];
+               b = CPUInfo[1];
+               c = CPUInfo[2];
+               d = CPUInfo[3];
             }
 #else
             a = b = c = d = 0
 #endif
+         }
+
+         static const std::string& getCPUType()
+         {
+            static std::string retVal = "Unknown";
+            const size_t CPUTypeSize = 13;
+            static char CPUType[CPUTypeSize] = {0};
+            if (!CPUType[0])
+            {
+               int i = 0;
+               int a, b, c, d;
+
+               if (haveCPUID())
+               {
+                  cpuid(0x00000000, a, b, c, d);
+                  CPUType[i++] = (char)(b & 0xff); b >>= 8;
+                  CPUType[i++] = (char)(b & 0xff); b >>= 8;
+                  CPUType[i++] = (char)(b & 0xff); b >>= 8;
+                  CPUType[i++] = (char)(b & 0xff); b >>= 8;
+                  CPUType[i++] = (char)(d & 0xff); d >>= 8;
+                  CPUType[i++] = (char)(d & 0xff); d >>= 8;
+                  CPUType[i++] = (char)(d & 0xff); d >>= 8;
+                  CPUType[i++] = (char)(d & 0xff); d >>= 8;
+                  CPUType[i++] = (char)(c & 0xff); c >>= 8;
+                  CPUType[i++] = (char)(c & 0xff); c >>= 8;
+                  CPUType[i++] = (char)(c & 0xff); c >>= 8;
+                  CPUType[i++] = (char)(c & 0xff); c >>= 8;
+               }
+               if (CPUType[0])
+               {
+                  retVal = CPUType;
+               }
+            }
+            return retVal;
          }
 
          static int getCPUIDFeatures()
@@ -350,13 +417,13 @@ done:
             bool retVal = false;
             if (haveCPUID())
             {
-               retVal = getCPUIDFeatures() & 0x00000010;
+               retVal = getCPUIDFeatures() & 0x00000010 ? true : false;
             }
             return retVal;
          }
 
          int haveAltiVec()
-         {
+         {// TODO
             volatile int altivec = 0;
 #if (defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))) || (defined(__OpenBSD__) && defined(__powerpc__))
 #ifdef __OpenBSD__
@@ -386,7 +453,7 @@ done:
             bool retVal = false;
             if (haveCPUID())
             {
-               retVal = (CPU_getCPUIDFeatures() & 0x00800000);
+               retVal = (getCPUIDFeatures() & 0x00800000) ? true : false;
             }
             return retVal;
          }
@@ -401,23 +468,7 @@ done:
                if (a >= 0x80000001)
                {
                   cpuid(0x80000001, a, b, c, d);
-                  retVal = (d & 0x80000000);
-               }
-            }
-            return retVal;
-         }
-
-         static bool have3DNow()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               int a, b, c, d;
-               cpuid(0x80000000, a, b, c, d);
-               if (a >= 0x80000001)
-               {
-                  cpuid(0x80000001, a, b, c, d);
-                  retVal = (d & 0x80000000);
+                  retVal = (d & 0x80000000) ? true : false;
                }
             }
             return retVal;
@@ -426,9 +477,9 @@ done:
          static bool haveSSE()
          {
             bool retVal = false;
-            if (CPU_haveCPUID())
+            if (haveCPUID())
             {
-               retVal = (getCPUIDFeatures() & 0x02000000);
+               retVal = (getCPUIDFeatures() & 0x02000000)? true : false;
             }
             return retVal;
          }
@@ -438,7 +489,7 @@ done:
             bool retVal = false;
             if (haveCPUID())
             {
-               retVal = (getCPUIDFeatures() & 0x04000000);
+               retVal = (getCPUIDFeatures() & 0x04000000)? true : false;
             }
             return retVal;
          }
@@ -453,7 +504,7 @@ done:
                if (a >= 1)
                {
                   cpuid(1, a, b, c, d);
-                  retVal = (c & 0x00000001);
+                  retVal = (c & 0x00000001) ? true : false;
                }
             }
             return retVal;
@@ -469,7 +520,7 @@ done:
                if (a >= 1)
                {
                   cpuid(1, a, b, c, d);
-                  retVal = (c & 0x00080000);
+                  retVal = (c & 0x00080000) ? true : false;
                }
             }
             return retVal;
@@ -485,25 +536,49 @@ done:
                if (a >= 1)
                {
                   cpuid(1, a, b, c, d);
-                  retVal = (c & 0x00100000);
+                  retVal = (c & 0x00100000)? true : false;
                }
             }
             return retVal;
          }
-      };
+
+         int getCPUCacheLineSize()
+         {
+            int a = 0, b = 0, c = 0, d = 0;
+            if(getCPUType() == "GenuineIntel")
+            {
+               cpuid(0x00000001, a, b, c, d);
+               return (((b >> 8) & 0xff) * 8);
+            }
+            else if(getCPUType() == "AuthenticAMD")
+            {
+               cpuid(0x80000005, a, b, c, d);
+               return (c & 0xff);
+            }
+            else
+            {
+               /* Just make a guess here... */
+               return CPUInfoTraits::kDefaultCacheLineSize;
+            }
+         }
+      };// CPUInfoHelper
 
       class CPUInfo : public blib::idioms::Singleton<CPUInfo>
       {
       public:
+         friend blib::idioms::Singleton<CPUInfo>;
          typedef CPUInfoTraits MyTraits;
          typedef MyTraits::DefIntType IntType;
+         typedef std::bitset<kFeatureEnd> FeatureFlagType;
+         typedef std::bitset<kCpuIdEnd> CpuVendorIdsFlagType;
+         typedef std::bitset<kCpuIdEnd> BugFlagType;
       private:
          //! @brief Cpu short vendor string.
          char _vendorString[MyTraits::kVendorStringMaxSize];
          //! @brief Cpu long vendor string (brand).
          char _brandString[MyTraits::kBrandStringMaxSize];
          //! @brief Cpu vendor id.
-         CpuVendorIds _vendorId;
+         CpuVendorIdsFlagType _vendorId;
          //! @brief Cpu family ID.
          IntType _family;
          //! @brief Cpu model ID.
@@ -513,17 +588,15 @@ done:
          //! @brief Number of processors or cores.
          IntType _numberOfProcessors;
          //! @brief Cpu features bitfield, see @c Feature enum).
-         Feature _features;
+         FeatureFlagType _features;
          //! @brief Cpu bugs bitfield, see @c Bug enum).
-         Bug _bugs;
+         BugFlagType _bugs;
          //! @brief Cpu cacheline size.
          IntType _cacheLineSize;
-         bool _hasCPUId;
-      public:
+      private:
          CPUInfo()
-            :_vendorId(0),_family(0),_model(0)
+            :_family(0),_model(0)
             ,_stepping(0),_numberOfProcessors(1)
-            ,_features(0),_bugs(0),_hasCPUId(true)
             ,_cacheLineSize(CPUInfoTraits::kDefaultCacheLineSize)
          {
             for(int i = 0;i < MyTraits::kVendorStringMaxSize; ++i)
@@ -534,6 +607,11 @@ done:
             {
                _brandString[i] = '\0';
             }
+            initialize();
+         }
+
+         void initialize()
+         {
          }
       };
    }

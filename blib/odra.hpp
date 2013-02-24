@@ -4,6 +4,9 @@
 #ifdef __SAME_MACHINE_EXECUTION__
 #undef __SAME_MACHINE_EXECUTION__
 #endif
+#ifndef __BLIB_SYSTEM_INFO_INCLUDED__
+#include <blib/sys/system_info.hpp>
+#endif
 
 //---------------------------------------
 // Microsoft Visual Studio
