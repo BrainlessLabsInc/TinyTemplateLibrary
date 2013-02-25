@@ -10,17 +10,9 @@
 #ifndef __BLIB_SINGLETON_INCLUDED__
 #include <blib/idioms/Sigleton.hpp>
 #endif
-#ifndef BOOST_HAS_STDINT_H
 #ifndef BOOST_CSTDINT_HPP
 #include <boost/cstdint.hpp>
 #endif
-#else
-#ifndef __STD_CSTDINT_INCLUDED__
-#define __STD_CSTDINT_INCLUDED__
-#include <cstdint>
-#endif
-#endif
-
 #ifndef __STD_ALGORITHM_INCLUDED__
 #define __STD_ALGORITHM_INCLUDED__
 #include <algorithm>
@@ -150,19 +142,23 @@ namespace blib{namespace system_info{
          kFeaturePOPCNT = 24,
          //! @brief Cpu supports LZCNT instruction.
          kFeatureLZCNT  = 25,
+         //! @brief Cpu supports PCLMULDQ set of instructions.
+         kX86FeaturePCLMULDQ  = 26,
          //! @brief Cpu supports multithreading.
-         kFeatureMultiThreading = 29,
+         kFeatureMultiThreading = 27,
          //! @brief Cpu supports execute disable bit (execute protection).
-         kFeatureExecuteDisableBit = 30,
+         kFeatureExecuteDisableBit = 28,
          //! @brief Cpu supports 64 bits.
-         kFeature64Bit = 31,
+         kFeature64Bit = 29,
+         kFeatureMOVBE = 30,
+         kFeatureAVX = 31,
          kFeatureEnd
       };
 
       //! @brief Cpu vendor IDs.
       //! Cpu vendor IDs are specific for AsmJit library. Vendor ID is not directly
       //! read from cpuid result, instead it's based on CPU vendor string.
-      enum CpuVendorIdsBitIndex
+      enum CpuVendorIds
       {
          //! @brief Intel CPU vendor.
          kCpuIntel = 0,
@@ -185,7 +181,7 @@ namespace blib{namespace system_info{
          kNoBug = 1,
          kBugEnd
       };
-      /* 
+      /*
       * This is a guess for the cacheline size used for padding.
       * Most x86 processors have a 64 byte cache line.
       * The 64-bit PowerPC processors have a 128 byte cache line.
@@ -246,7 +242,7 @@ namespace blib{namespace system_info{
             : "%eax", "%ecx"
                );
 #elif defined(__GNUC__) && defined(__x86_64__)
-            /* Technically, if this is being compiled under __x86_64__ then it has 
+            /* Technically, if this is being compiled under __x86_64__ then it has
             CPUid by definition.  But it's nice to be able to prove it.  :)      */
             __asm__ (
                "        pushfq                      # Get original EFLAGS             \n"
@@ -317,37 +313,37 @@ namespace blib{namespace system_info{
          static void cpuid(const int aFeature, int& a, int& b, int& c, int& d)
          {
 #if defined(__GNUC__) && defined(i386)
-            __asm__ __volatile__( 
-               "        pushl %%ebx        \n" 
-               "        cpuid              \n" 
-               "        movl %%ebx, %%esi  \n" 
-               "        popl %%ebx         \n" : 
+            __asm__ __volatile__(
+               "        pushl %%ebx        \n"
+               "        cpuid              \n"
+               "        movl %%ebx, %%esi  \n"
+               "        popl %%ebx         \n" :
             "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (aFeature))
 #elif defined(__GNUC__) && defined(__x86_64__)
-            __asm__ __volatile__( 
-               "        pushq %%rbx        \n" 
-               "        cpuid              \n" 
-               "        movq %%rbx, %%rsi  \n" 
-               "        popq %%rbx         \n" : 
+            __asm__ __volatile__(
+               "        pushq %%rbx        \n"
+               "        cpuid              \n"
+               "        movq %%rbx, %%rsi  \n"
+               "        popq %%rbx         \n" :
             "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (aFeature))
 //#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
 //            __asm
 //            {
 //               __asm mov eax, aFeature
-//                  __asm cpuid 
-//                  __asm mov a, eax 
-//                  __asm mov b, ebx 
-//                  __asm mov c, ecx 
-//                  __asm mov d, edx 
+//                  __asm cpuid
+//                  __asm mov a, eax
+//                  __asm mov b, ebx
+//                  __asm mov c, ecx
+//                  __asm mov d, edx
 //            }
 #elif defined(__WATCOMC__)
             __asm
             {
                __asm mov eax, aFeature
-                  __asm cpuid 
-                  __asm mov a, eax 
-                  __asm mov b, ebx 
-                  __asm mov c, ecx 
+                  __asm cpuid
+                  __asm mov a, eax
+                  __asm mov b, ebx
+                  __asm mov c, ecx
                   __asm mov d, edx
             }
 #elif defined(_MSC_VER) && (_MSC_VER > 1400)
@@ -360,7 +356,7 @@ namespace blib{namespace system_info{
                d = CPUInfo[3];
             }
 #else
-            a = b = c = d = 0
+            a = b = c = d = 0;
 #endif
          }
 
@@ -377,18 +373,30 @@ namespace blib{namespace system_info{
                if (haveCPUID())
                {
                   cpuid(0x00000000, a, b, c, d);
-                  CPUType[i++] = (char)(b & 0xff); b >>= 8;
-                  CPUType[i++] = (char)(b & 0xff); b >>= 8;
-                  CPUType[i++] = (char)(b & 0xff); b >>= 8;
-                  CPUType[i++] = (char)(b & 0xff); b >>= 8;
-                  CPUType[i++] = (char)(d & 0xff); d >>= 8;
-                  CPUType[i++] = (char)(d & 0xff); d >>= 8;
-                  CPUType[i++] = (char)(d & 0xff); d >>= 8;
-                  CPUType[i++] = (char)(d & 0xff); d >>= 8;
-                  CPUType[i++] = (char)(c & 0xff); c >>= 8;
-                  CPUType[i++] = (char)(c & 0xff); c >>= 8;
-                  CPUType[i++] = (char)(c & 0xff); c >>= 8;
-                  CPUType[i++] = (char)(c & 0xff); c >>= 8;
+                  CPUType[i++] = (char)(b & 0xff);
+                  b >>= 8;
+                  CPUType[i++] = (char)(b & 0xff);
+                  b >>= 8;
+                  CPUType[i++] = (char)(b & 0xff);
+                  b >>= 8;
+                  CPUType[i++] = (char)(b & 0xff);
+                  b >>= 8;
+                  CPUType[i++] = (char)(d & 0xff);
+                  d >>= 8;
+                  CPUType[i++] = (char)(d & 0xff);
+                  d >>= 8;
+                  CPUType[i++] = (char)(d & 0xff);
+                  d >>= 8;
+                  CPUType[i++] = (char)(d & 0xff);
+                  d >>= 8;
+                  CPUType[i++] = (char)(c & 0xff);
+                  c >>= 8;
+                  CPUType[i++] = (char)(c & 0xff);
+                  c >>= 8;
+                  CPUType[i++] = (char)(c & 0xff);
+                  c >>= 8;
+                  CPUType[i++] = (char)(c & 0xff);
+                  c >>= 8;
                }
                if (CPUType[0])
                {
@@ -412,137 +420,7 @@ namespace blib{namespace system_info{
             return retVal;
          }
 
-         static bool haveRDTSC()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               retVal = getCPUIDFeatures() & 0x00000010 ? true : false;
-            }
-            return retVal;
-         }
-
-         int haveAltiVec()
-         {// TODO
-            volatile int altivec = 0;
-#if (defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))) || (defined(__OpenBSD__) && defined(__powerpc__))
-#ifdef __OpenBSD__
-            int selectors[2] = { CTL_MACHDEP, CPU_ALTIVEC };
-#else
-            int selectors[2] = { CTL_HW, HW_VECTORUNIT };
-#endif
-            int hasVectorUnit = 0;
-            size_t length = sizeof(hasVectorUnit);
-            int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0);
-            if (0 == error)
-               altivec = (hasVectorUnit != 0);
-#elif SDL_ALTIVEC_BLITTERS && HAVE_SETJMP
-            void (*handler) (int sig);
-            handler = signal(SIGILL, illegal_instruction);
-            if (setjmp(jmpbuf) == 0) {
-               asm volatile ("mtspr 256, %0\n\t" "vand %%v0, %%v0, %%v0"::"r" (-1));
-               altivec = 1;
-            }
-            signal(SIGILL, handler);
-#endif
-            return altivec;
-         }
-
-         static bool haveMMX()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               retVal = (getCPUIDFeatures() & 0x00800000) ? true : false;
-            }
-            return retVal;
-         }
-
-         static bool have3DNow()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               int a, b, c, d;
-               cpuid(0x80000000, a, b, c, d);
-               if (a >= 0x80000001)
-               {
-                  cpuid(0x80000001, a, b, c, d);
-                  retVal = (d & 0x80000000) ? true : false;
-               }
-            }
-            return retVal;
-         }
-
-         static bool haveSSE()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               retVal = (getCPUIDFeatures() & 0x02000000)? true : false;
-            }
-            return retVal;
-         }
-
-         static bool haveSSE2()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               retVal = (getCPUIDFeatures() & 0x04000000)? true : false;
-            }
-            return retVal;
-         }
-
-         static bool haveSSE3()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               int a, b, c, d;
-               cpuid(0, a, b, c, d);
-               if (a >= 1)
-               {
-                  cpuid(1, a, b, c, d);
-                  retVal = (c & 0x00000001) ? true : false;
-               }
-            }
-            return retVal;
-         }
-
-         static bool haveSSE41()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               int a, b, c, d;
-               cpuid(1, a, b, c, d);
-               if (a >= 1)
-               {
-                  cpuid(1, a, b, c, d);
-                  retVal = (c & 0x00080000) ? true : false;
-               }
-            }
-            return retVal;
-         }
-
-         static bool haveSSE42()
-         {
-            bool retVal = false;
-            if (haveCPUID())
-            {
-               int a, b, c, d;
-               cpuid(1, a, b, c, d);
-               if (a >= 1)
-               {
-                  cpuid(1, a, b, c, d);
-                  retVal = (c & 0x00100000)? true : false;
-               }
-            }
-            return retVal;
-         }
-
-         int getCPUCacheLineSize()
+         static int getCPUCacheLineSize()
          {
             int a = 0, b = 0, c = 0, d = 0;
             if(getCPUType() == "GenuineIntel")
@@ -550,7 +428,7 @@ namespace blib{namespace system_info{
                cpuid(0x00000001, a, b, c, d);
                return (((b >> 8) & 0xff) * 8);
             }
-            else if(getCPUType() == "AuthenticAMD")
+            else if((getCPUType() == "AuthenticAMD") || (getCPUType() == "AMDisbetter!"))
             {
                cpuid(0x80000005, a, b, c, d);
                return (c & 0xff);
@@ -570,7 +448,7 @@ namespace blib{namespace system_info{
          typedef CPUInfoTraits MyTraits;
          typedef MyTraits::DefIntType IntType;
          typedef std::bitset<kFeatureEnd> FeatureFlagType;
-         typedef std::bitset<kCpuIdEnd> CpuVendorIdsFlagType;
+         typedef CpuVendorIds CpuVendorIdsFlagType;
          typedef std::bitset<kCpuIdEnd> BugFlagType;
       private:
          //! @brief Cpu short vendor string.
@@ -593,11 +471,16 @@ namespace blib{namespace system_info{
          BugFlagType _bugs;
          //! @brief Cpu cacheline size.
          IntType _cacheLineSize;
+         IntType _processorType;
+         IntType _brandIndex;
+         IntType _apicPhysicalId;
+         bool _haveCpuId;
       private:
          CPUInfo()
             :_family(0),_model(0)
             ,_stepping(0),_numberOfProcessors(1)
-            ,_cacheLineSize(CPUInfoTraits::kDefaultCacheLineSize)
+            ,_cacheLineSize(CPUInfoHelper::getCPUCacheLineSize())
+            ,_haveCpuId(CPUInfoHelper::haveCPUID())
          {
             for(int i = 0;i < MyTraits::kVendorStringMaxSize; ++i)
             {
@@ -607,11 +490,104 @@ namespace blib{namespace system_info{
             {
                _brandString[i] = '\0';
             }
-            initialize();
+            if(_haveCpuId)
+            {
+               initialize();
+            }
          }
 
          void initialize()
          {
+            int a = 0,b = 0,c = 0,d = 0;
+            CPUInfoHelper::cpuid(1,a,b,c,d);
+            // Fill family and model information
+            _family = (a >> 8) &0x0F;
+            _model = (a >> 4) &0x0F;
+            _stepping = a & 0x0F;
+            // Fill extended family and model
+            if(0x0F == _family)
+            {
+               _family += (a >> 20) & 0xFF;
+               _model += ((a >> 16) & 0x0F)<<4;
+            }
+            _processorType = (a >> 12) & 0x03;
+            _brandIndex = b & 0xFF;
+            _apicPhysicalId = (b >> 24) & 0xFF;
+
+            if(c & 0x00000001U)
+            {
+               _features.set(kFeatureSSE3);
+            }
+            if(c & 0x00000002U)
+            {
+               _features.set(kX86FeaturePCLMULDQ);
+            }
+            if(c & 0x00000008U)
+            {
+               _features.set(kFeatureMonitorMWait);
+            }
+            if(c & 0x00000200U)
+            {
+               _features.set(kFeatureSSSE3);
+            }
+            if(c & 0x00002000U)
+            {
+               _features.set(kFeatureCMPXCHG16B);
+            }
+            if(c & 0x00080000U)
+            {
+               _features.set(kFeatureSSE4_1);
+            }
+            if(c & 0x00100000U)
+            {
+               _features.set(kFeatureSSE4_2);
+            }
+            if(c & 0x00400000U)
+            {
+               _features.set(kFeatureMOVBE);
+            }
+            if(c & 0x00800000U)
+            {
+               _features.set(kFeaturePOPCNT);
+            }
+            if(c & 0x10000000U)
+            {
+               _features.set(kFeatureAVX);
+            }
+            if(c & 0x00000010U)
+            {
+               _features.set(kFeatureRDTSC);
+            }
+            if(c & 0x00000100U)
+            {
+               _features.set(kFeatureCMPXCHG8B);
+            }
+            if(c & 0x00008000U)
+            {
+               _features.set(kFeatureCMOV);
+            }
+            if(c & 0x00800000U)
+            {
+               _features.set(kFeatureMMX);
+            }
+            if(c & 0x01000000U)
+            {
+               _features.set(kFeatureFXSR);
+            }
+            if(c & 0x02000000U)
+            {
+               _features.set(kFeatureSSE);
+               _features.set(kFeatureMMXExt);
+            }
+            if(c & 0x04000000U)
+            {
+               _features.set(kFeatureSSE);
+               _features.set(kFeatureSSE2);
+            }
+            if(c & 0x10000000U)
+            {
+               _features.set(kFeatureMultiThreading);
+            }
          }
       };
    }
