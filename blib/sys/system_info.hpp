@@ -155,25 +155,6 @@ namespace blib{namespace system_info{
          kFeatureEnd
       };
 
-      //! @brief Cpu vendor IDs.
-      //! Cpu vendor IDs are specific for AsmJit library. Vendor ID is not directly
-      //! read from cpuid result, instead it's based on CPU vendor string.
-      enum CpuVendorIds
-      {
-         //! @brief Intel CPU vendor.
-         kCpuIntel = 0,
-         //! @brief AMD CPU vendor.
-         kCpuAmd = 1,
-         //! @brief National Semiconductor CPU vendor (applies also to Cyrix processors).
-         kCpuNSM = 2,
-         //! @brief Transmeta CPU vendor.
-         kCpuTransmeta = 3,
-         //! @brief VIA CPU vendor.
-         kCpuVia = 4,
-         //! @brief Unknown CPU vendor.
-         kCpuIdEnd
-      };
-
       //! @brief X86/X64 CPU bugs.
       enum BugBitIndex
       {
@@ -192,9 +173,29 @@ namespace blib{namespace system_info{
       {
       public:
          typedef boost::uint32_t DefIntType;
+         typedef FeatureBitIndex FeatureBitIndexType;
+         typedef BugBitIndex BugBitIndexType;
          static const DefIntType kDefaultCacheLineSize = 128;
          static const DefIntType kVendorStringMaxSize = 16;
          static const DefIntType kBrandStringMaxSize = 64;
+         //! @brief Cpu vendor IDs.
+         //! Cpu vendor IDs are specific for AsmJit library. Vendor ID is not directly
+         //! read from cpuid result, instead it's based on CPU vendor string.
+         enum CpuVendorIds
+         {
+            //! @brief Intel CPU vendor.
+            kCpuIntel = 0,
+            //! @brief AMD CPU vendor.
+            kCpuAmd = 1,
+            //! @brief National Semiconductor CPU vendor (applies also to Cyrix processors).
+            kCpuNSM = 2,
+            //! @brief Transmeta CPU vendor.
+            kCpuTransmeta = 3,
+            //! @brief VIA CPU vendor.
+            kCpuVia = 4,
+            //! @brief Unknown CPU vendor.
+            kCpuIdEnd
+         };
       };
 
       struct CPUInfoHelper
