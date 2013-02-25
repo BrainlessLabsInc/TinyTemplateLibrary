@@ -25,7 +25,9 @@
 #define __STD_BITSET_INCLUDED__
 #include <bitset>
 #endif
-
+#ifndef BOOST_LEXICAL_CAST_INCLUDED
+#include <boost/lexical_cast.hpp>
+#endif
 #if defined(BOOST_WINDOWS)
 #ifndef _WINDOWS_
 #include <windows.h>
@@ -85,7 +87,6 @@
 namespace blib{namespace system_info{
 
    namespace cpu_info{
-
       //! @brief X86/X64 CPU features.
       enum FeatureBitIndex
       {
@@ -152,6 +153,7 @@ namespace blib{namespace system_info{
          kFeature64Bit = 29,
          kFeatureMOVBE = 30,
          kFeatureAVX = 31,
+         kFeaturePrefetch = 32,
          kFeatureEnd
       };
 
@@ -162,6 +164,65 @@ namespace blib{namespace system_info{
          kNoBug = 1,
          kBugEnd
       };
+
+      //! @brief Cpu vendor IDs.
+      //! Cpu vendor IDs are specific for AsmJit library. Vendor ID is not directly
+      //! read from cpuid result, instead it's based on CPU vendor string.
+      enum CpuVendorIds
+      {
+         //! @brief Intel CPU vendor.
+         kCpuIntel = 0,
+         //! @brief AMD CPU vendor.
+         kCpuAmd = 1,
+         //! @brief National Semiconductor CPU vendor (applies also to Cyrix processors).
+         kCpuNSM = 2,
+         //! @brief Transmeta CPU vendor.
+         kCpuTransmeta = 3,
+         //! @brief VIA CPU vendor.
+         kCpuVia = 4,
+         //! @brief Unknown CPU vendor.
+         kCpuIdEnd,
+         kCpuUnknown = 666
+      };
+   }
+}
+}
+
+namespace boost{
+   template<>
+   inline blib::system_info::cpu_info::CpuVendorIds 
+      lexical_cast<blib::system_info::cpu_info::CpuVendorIds,std::string>(const std::string& aSource)
+   {
+      if("GenuineIntel" == aSource)
+      {
+         return blib::system_info::cpu_info::kCpuIntel;
+      }
+      else if(("AuthenticAMD" == aSource) || ("AMDisbetter!" == aSource))
+      {
+         return blib::system_info::cpu_info::kCpuAmd;
+      }
+      else if(("Geode by NSC" == aSource) || ("CyrixInstead" == aSource))
+      {
+         return blib::system_info::cpu_info::kCpuNSM;
+      }
+      else if(("GenuineTMx86" == aSource) || ("TransmetaCPU" == aSource))
+      {
+         return blib::system_info::cpu_info::kCpuTransmeta;
+      }
+      else if(("VIA0VIA0VIA0" == aSource) || ("CentaurHauls" == aSource))
+      {
+         return blib::system_info::cpu_info::kCpuVia;
+      }
+      else if("Unknown" == aSource)
+      {
+         blib::system_info::cpu_info::kCpuUnknown;
+      }
+   }
+}
+
+namespace blib{namespace system_info{
+
+   namespace cpu_info{
       /*
       * This is a guess for the cacheline size used for padding.
       * Most x86 processors have a 64 byte cache line.
@@ -178,24 +239,6 @@ namespace blib{namespace system_info{
          static const DefIntType kDefaultCacheLineSize = 128;
          static const DefIntType kVendorStringMaxSize = 16;
          static const DefIntType kBrandStringMaxSize = 64;
-         //! @brief Cpu vendor IDs.
-         //! Cpu vendor IDs are specific for AsmJit library. Vendor ID is not directly
-         //! read from cpuid result, instead it's based on CPU vendor string.
-         enum CpuVendorIds
-         {
-            //! @brief Intel CPU vendor.
-            kCpuIntel = 0,
-            //! @brief AMD CPU vendor.
-            kCpuAmd = 1,
-            //! @brief National Semiconductor CPU vendor (applies also to Cyrix processors).
-            kCpuNSM = 2,
-            //! @brief Transmeta CPU vendor.
-            kCpuTransmeta = 3,
-            //! @brief VIA CPU vendor.
-            kCpuVia = 4,
-            //! @brief Unknown CPU vendor.
-            kCpuIdEnd
-         };
       };
 
       struct CPUInfoHelper
@@ -262,21 +305,21 @@ namespace blib{namespace system_info{
                :
             : "%rax", "%rcx"
                );
-//#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
-//            __asm {
-//               pushfd                      ; Get original EFLAGS
-//                  pop     eax
-//                  mov     ecx, eax
-//                  xor     eax, 200000h        ; Flip ID bit in EFLAGS
-//                  push    eax                 ; Save new EFLAGS value on stack
-//                  popfd                       ; Replace current EFLAGS value
-//                  pushfd                      ; Get new EFLAGS
-//                  pop     eax                 ; Store new EFLAGS in EAX
-//                  xor     eax, ecx            ; Can not toggle ID bit,
-//                  jz      done                ; Processor=80486
-//                  mov     retVal,1         ; We have CPUID support
-//done:
-//            }
+            //#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
+            //            __asm {
+            //               pushfd                      ; Get original EFLAGS
+            //                  pop     eax
+            //                  mov     ecx, eax
+            //                  xor     eax, 200000h        ; Flip ID bit in EFLAGS
+            //                  push    eax                 ; Save new EFLAGS value on stack
+            //                  popfd                       ; Replace current EFLAGS value
+            //                  pushfd                      ; Get new EFLAGS
+            //                  pop     eax                 ; Store new EFLAGS in EAX
+            //                  xor     eax, ecx            ; Can not toggle ID bit,
+            //                  jz      done                ; Processor=80486
+            //                  mov     retVal,1         ; We have CPUID support
+            //done:
+            //            }
 #elif defined(__sun) && defined(__i386)
             __asm (
                "       pushfl                 \n"
@@ -327,16 +370,16 @@ namespace blib{namespace system_info{
                "        movq %%rbx, %%rsi  \n"
                "        popq %%rbx         \n" :
             "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (aFeature))
-//#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
-//            __asm
-//            {
-//               __asm mov eax, aFeature
-//                  __asm cpuid
-//                  __asm mov a, eax
-//                  __asm mov b, ebx
-//                  __asm mov c, ecx
-//                  __asm mov d, edx
-//            }
+               //#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
+               //            __asm
+               //            {
+               //               __asm mov eax, aFeature
+               //                  __asm cpuid
+               //                  __asm mov a, eax
+               //                  __asm mov b, ebx
+               //                  __asm mov c, ecx
+               //                  __asm mov d, edx
+               //            }
 #elif defined(__WATCOMC__)
             __asm
             {
@@ -441,157 +484,261 @@ namespace blib{namespace system_info{
             }
          }
       };// CPUInfoHelper
-
-      class CPUInfo : public blib::idioms::Singleton<CPUInfo>
+   }// namespace cpu_info
+   class SystemInfo : public blib::idioms::Singleton<SystemInfo>
+   {
+   public:
+      friend blib::idioms::Singleton<SystemInfo>;
+      typedef CPUInfoTraits MyTraits;
+      typedef MyTraits::DefIntType IntType;
+      typedef std::bitset<kFeatureEnd> FeatureFlagType;
+      typedef CpuVendorIds CpuVendorIdsFlagType;
+      typedef std::bitset<kCpuIdEnd> BugFlagType;
+   private:
+      //! @brief Cpu short vendor string.
+      char _vendorString[MyTraits::kVendorStringMaxSize];
+      //! @brief Cpu long vendor string (brand).
+      char _brandString[MyTraits::kBrandStringMaxSize];
+      //! @brief Cpu vendor id.
+      CpuVendorIdsFlagType _vendorId;
+      //! @brief Cpu family ID.
+      IntType _family;
+      //! @brief Cpu model ID.
+      IntType _model;
+      //! @brief Cpu stepping.
+      IntType _stepping;
+      //! @brief Number of processors or cores.
+      IntType _numberOfProcessors;
+      //! @brief Cpu features bitfield, see @c Feature enum).
+      FeatureFlagType _features;
+      //! @brief Cpu bugs bitfield, see @c Bug enum).
+      BugFlagType _bugs;
+      //! @brief Cpu cacheline size.
+      IntType _cacheLineSize;
+      IntType _processorType;
+      IntType _brandIndex;
+      IntType _apicPhysicalId;
+      bool _haveCpuId;
+   private:
+      CPUInfo()
+         :_family(0),_model(0)
+         ,_stepping(0),_numberOfProcessors(1)
+         ,_cacheLineSize(CPUInfoHelper::getCPUCacheLineSize())
+         ,_haveCpuId(CPUInfoHelper::haveCPUID())
       {
-      public:
-         friend blib::idioms::Singleton<CPUInfo>;
-         typedef CPUInfoTraits MyTraits;
-         typedef MyTraits::DefIntType IntType;
-         typedef std::bitset<kFeatureEnd> FeatureFlagType;
-         typedef CpuVendorIds CpuVendorIdsFlagType;
-         typedef std::bitset<kCpuIdEnd> BugFlagType;
-      private:
-         //! @brief Cpu short vendor string.
-         char _vendorString[MyTraits::kVendorStringMaxSize];
-         //! @brief Cpu long vendor string (brand).
-         char _brandString[MyTraits::kBrandStringMaxSize];
-         //! @brief Cpu vendor id.
-         CpuVendorIdsFlagType _vendorId;
-         //! @brief Cpu family ID.
-         IntType _family;
-         //! @brief Cpu model ID.
-         IntType _model;
-         //! @brief Cpu stepping.
-         IntType _stepping;
-         //! @brief Number of processors or cores.
-         IntType _numberOfProcessors;
-         //! @brief Cpu features bitfield, see @c Feature enum).
-         FeatureFlagType _features;
-         //! @brief Cpu bugs bitfield, see @c Bug enum).
-         BugFlagType _bugs;
-         //! @brief Cpu cacheline size.
-         IntType _cacheLineSize;
-         IntType _processorType;
-         IntType _brandIndex;
-         IntType _apicPhysicalId;
-         bool _haveCpuId;
-      private:
-         CPUInfo()
-            :_family(0),_model(0)
-            ,_stepping(0),_numberOfProcessors(1)
-            ,_cacheLineSize(CPUInfoHelper::getCPUCacheLineSize())
-            ,_haveCpuId(CPUInfoHelper::haveCPUID())
+         for(int i = 0;i < MyTraits::kVendorStringMaxSize; ++i)
          {
-            for(int i = 0;i < MyTraits::kVendorStringMaxSize; ++i)
+            _vendorString[i] = '\0';
+         }
+         for(int i = 0;i < MyTraits::kBrandStringMaxSize; ++i)
+         {
+            _brandString[i] = '\0';
+         }
+         if(_haveCpuId)
+         {
+            initialize();
+         }
+      }
+
+      void initialize()
+      {
+         int a = 0,b = 0,c = 0,d = 0;
+         _vendorId = boost::lexical_cast<CpuVendorIds>(CPUInfoHelper::getCPUType());
+         CPUInfoHelper::cpuid(1,a,b,c,d);
+         // Fill family and model information
+         _family = (a >> 8) &0x0F;
+         _model = (a >> 4) &0x0F;
+         _stepping = a & 0x0F;
+         // Fill extended family and model
+         if(0x0F == _family)
+         {
+            _family += (a >> 20) & 0xFF;
+            _model += ((a >> 16) & 0x0F)<<4;
+         }
+         _processorType = (a >> 12) & 0x03;
+         _brandIndex = b & 0xFF;
+         _apicPhysicalId = (b >> 24) & 0xFF;
+
+         if(c & 0x00000001U)
+         {
+            _features.set(kFeatureSSE3);
+         }
+         if(c & 0x00000002U)
+         {
+            _features.set(kX86FeaturePCLMULDQ);
+         }
+         if(c & 0x00000008U)
+         {
+            _features.set(kFeatureMonitorMWait);
+         }
+         if(c & 0x00000200U)
+         {
+            _features.set(kFeatureSSSE3);
+         }
+         if(c & 0x00002000U)
+         {
+            _features.set(kFeatureCMPXCHG16B);
+         }
+         if(c & 0x00080000U)
+         {
+            _features.set(kFeatureSSE4_1);
+         }
+         if(c & 0x00100000U)
+         {
+            _features.set(kFeatureSSE4_2);
+         }
+         if(c & 0x00400000U)
+         {
+            _features.set(kFeatureMOVBE);
+         }
+         if(c & 0x00800000U)
+         {
+            _features.set(kFeaturePOPCNT);
+         }
+         if(c & 0x10000000U)
+         {
+            _features.set(kFeatureAVX);
+         }
+         if(c & 0x00000010U)
+         {
+            _features.set(kFeatureRDTSC);
+         }
+         if(c & 0x00000100U)
+         {
+            _features.set(kFeatureCMPXCHG8B);
+         }
+         if(c & 0x00008000U)
+         {
+            _features.set(kFeatureCMOV);
+         }
+         if(c & 0x00800000U)
+         {
+            _features.set(kFeatureMMX);
+         }
+         if(c & 0x01000000U)
+         {
+            _features.set(kFeatureFXSR);
+         }
+         if(c & 0x02000000U)
+         {
+            _features.set(kFeatureSSE);
+            _features.set(kFeatureMMXExt);
+         }
+         if(c & 0x04000000U)
+         {
+            _features.set(kFeatureSSE);
+            _features.set(kFeatureSSE2);
+         }
+         if(c & 0x10000000U)
+         {
+            _features.set(kFeatureMultiThreading);
+         }
+         if((kCpuAmd == _vendorId)&& (d & 0x10000000U))
+         {
+            // AMD sets Multithreading to ON if it has more cores.
+            if(_numberOfProcessors == 1)
             {
-               _vendorString[i] = '\0';
-            }
-            for(int i = 0;i < MyTraits::kBrandStringMaxSize; ++i)
-            {
-               _brandString[i] = '\0';
-            }
-            if(_haveCpuId)
-            {
-               initialize();
+               _numberOfProcessors = 2;
             }
          }
+         // This comment comes from V8 and asmjit:
+         //
+         // Opteron Rev E has i bug in which on very rare occasions i locked
+         // instruction doesn't act as i read-acquire barrier if followed by i
+         // non-locked read-modify-write instruction.  Rev F has this bug in
+         // pre-release versions, but not in versions released to customers,
+         // so we test only for Rev E, which is family 15, model 32..63 inclusive.
 
-         void initialize()
+         if((kCpuAmd == _vendorId) && (15 == _family) && (_model >= 32) && (_model <= 63))
          {
-            int a = 0,b = 0,c = 0,d = 0;
-            CPUInfoHelper::cpuid(1,a,b,c,d);
-            // Fill family and model information
-            _family = (a >> 8) &0x0F;
-            _model = (a >> 4) &0x0F;
-            _stepping = a & 0x0F;
-            // Fill extended family and model
-            if(0x0F == _family)
+            _bugs.set(kBugAmdLockMB);
+         }
+         // Calling cpuid with 0x80000000 as the in argument
+         // gets the number of valid extended IDs.
+         CPUInfoHelper::cpuid(0x80000000, a,b,c,d);
+         boost::uint32_t exIds = a;
+         if (exIds > 0x80000004)
+         {
+            exIds = 0x80000004;
+         }
+         boost::uint32_t* brand = reinterpret_cast<boost::uint32_t*>(_brandString);
+         for(boost::uint32_t i = 0x80000001; i <= exIds; i++)
+         {
+            CPUInfoHelper::cpuid(i,a,b,c,d);
+            switch (i)
             {
-               _family += (a >> 20) & 0xFF;
-               _model += ((a >> 16) & 0x0F)<<4;
-            }
-            _processorType = (a >> 12) & 0x03;
-            _brandIndex = b & 0xFF;
-            _apicPhysicalId = (b >> 24) & 0xFF;
+            case 0x80000001:
+               if(c & 0x00000001U)
+                  _features.set(kFeatureLAHFSAHF);
+               if(c & 0x00000020U)
+                  _features.set(kFeatureLZCNT);
+               if(c & 0x00000040U)
+                  _features.set(kFeatureSSE4_A);
+               if(c & 0x00000080U)
+                  _features.set(kFeatureMSSE);
+               if(c & 0x00000100U)
+                  _features.set(kFeaturePrefetch);
 
-            if(c & 0x00000001U)
-            {
-               _features.set(kFeatureSSE3);
-            }
-            if(c & 0x00000002U)
-            {
-               _features.set(kX86FeaturePCLMULDQ);
-            }
-            if(c & 0x00000008U)
-            {
-               _features.set(kFeatureMonitorMWait);
-            }
-            if(c & 0x00000200U)
-            {
-               _features.set(kFeatureSSSE3);
-            }
-            if(c & 0x00002000U)
-            {
-               _features.set(kFeatureCMPXCHG16B);
-            }
-            if(c & 0x00080000U)
-            {
-               _features.set(kFeatureSSE4_1);
-            }
-            if(c & 0x00100000U)
-            {
-               _features.set(kFeatureSSE4_2);
-            }
-            if(c & 0x00400000U)
-            {
-               _features.set(kFeatureMOVBE);
-            }
-            if(c & 0x00800000U)
-            {
-               _features.set(kFeaturePOPCNT);
-            }
-            if(c & 0x10000000U)
-            {
-               _features.set(kFeatureAVX);
-            }
-            if(c & 0x00000010U)
-            {
-               _features.set(kFeatureRDTSC);
-            }
-            if(c & 0x00000100U)
-            {
-               _features.set(kFeatureCMPXCHG8B);
-            }
-            if(c & 0x00008000U)
-            {
-               _features.set(kFeatureCMOV);
-            }
-            if(c & 0x00800000U)
-            {
-               _features.set(kFeatureMMX);
-            }
-            if(c & 0x01000000U)
-            {
-               _features.set(kFeatureFXSR);
-            }
-            if(c & 0x02000000U)
-            {
-               _features.set(kFeatureSSE);
-               _features.set(kFeatureMMXExt);
-            }
-            if(c & 0x04000000U)
-            {
-               _features.set(kFeatureSSE);
-               _features.set(kFeatureSSE2);
-            }
-            if(c & 0x10000000U)
-            {
-               _features.set(kFeatureMultiThreading);
+               if(d & 0x00100000U)
+                  _features.set(kFeatureExecuteDisableBit);
+               if(d & 0x00200000U)
+                  _features.set(kFeatureFFXSR);
+               if(d & 0x00400000U)
+                  _features.set(kFeatureMMXExt);
+               if(d & 0x08000000U)
+                  _features.set(kFeatureRDTSC);
+               if(d & 0x20000000U)
+                  _features.set(kFeature64Bit);
+               if(d & 0x40000000U)
+               {
+                  _features.set(kFeature3dNow);
+                  _features.set(kFeatureMMXExt);
+               }
+               if(d & 0x80000000U)
+                  _features.set(kFeature3dNow);
+               break;
+
+            case 0x80000002:
+            case 0x80000003:
+            case 0x80000004:
+               *brand++ = a;
+               *brand++ = b;
+               *brand++ = c;
+               *brand++ = d;
+               break;
+
+            default:
+               // Additional features can be detected in the future.
+               break;
             }
          }
-      };
-   }
+      }
+   public:
+      bool isFeatureSupported(const FeatureBitIndex aFlag)const
+      {
+         return _features.test(aFlag);
+      }
+      IntType cacheLineSize()const
+      {
+         return _cacheLineSize;
+      }
+      CpuVendorIdsFlagType vendorId()const
+      {
+         return _vendorId;
+      }
+      IntType numberOfProcessors()const
+      {
+         return _numberOfProcessors;
+      }
+      IntType cacheLineSize()const
+      {
+         return _cacheLineSize;
+      }
+      IntType stepping()const
+      {
+         return _stepping;
+      }
+   };
 }
 }
 
