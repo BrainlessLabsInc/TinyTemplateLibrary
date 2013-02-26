@@ -489,11 +489,11 @@ namespace blib{namespace system_info{
    {
    public:
       friend blib::idioms::Singleton<SystemInfo>;
-      typedef CPUInfoTraits MyTraits;
+      typedef cpu_info::CPUInfoTraits MyTraits;
       typedef MyTraits::DefIntType IntType;
-      typedef std::bitset<kFeatureEnd> FeatureFlagType;
-      typedef CpuVendorIds CpuVendorIdsFlagType;
-      typedef std::bitset<kCpuIdEnd> BugFlagType;
+      typedef std::bitset<cpu_info::kFeatureEnd> FeatureFlagType;
+      typedef cpu_info::CpuVendorIds CpuVendorIdsFlagType;
+      typedef std::bitset<cpu_info::kCpuIdEnd> BugFlagType;
    private:
       //! @brief Cpu short vendor string.
       char _vendorString[MyTraits::kVendorStringMaxSize];
@@ -520,11 +520,11 @@ namespace blib{namespace system_info{
       IntType _apicPhysicalId;
       bool _haveCpuId;
    private:
-      CPUInfo()
+      SystemInfo()
          :_family(0),_model(0)
          ,_stepping(0),_numberOfProcessors(1)
-         ,_cacheLineSize(CPUInfoHelper::getCPUCacheLineSize())
-         ,_haveCpuId(CPUInfoHelper::haveCPUID())
+         ,_cacheLineSize(cpu_info::CPUInfoHelper::getCPUCacheLineSize())
+         ,_haveCpuId(cpu_info::CPUInfoHelper::haveCPUID())
       {
          for(int i = 0;i < MyTraits::kVendorStringMaxSize; ++i)
          {
@@ -542,8 +542,9 @@ namespace blib{namespace system_info{
 
       void initialize()
       {
+         using namespace cpu_info;
          int a = 0,b = 0,c = 0,d = 0;
-         _vendorId = boost::lexical_cast<CpuVendorIds>(CPUInfoHelper::getCPUType());
+         _vendorId = boost::lexical_cast<cpu_info::CpuVendorIds>(cpu_info::CPUInfoHelper::getCPUType());
          CPUInfoHelper::cpuid(1,a,b,c,d);
          // Fill family and model information
          _family = (a >> 8) &0x0F;
@@ -714,7 +715,7 @@ namespace blib{namespace system_info{
          }
       }
    public:
-      bool isFeatureSupported(const FeatureBitIndex aFlag)const
+      bool isFeatureSupported(const cpu_info::FeatureBitIndex aFlag)const
       {
          return _features.test(aFlag);
       }
@@ -729,10 +730,6 @@ namespace blib{namespace system_info{
       IntType numberOfProcessors()const
       {
          return _numberOfProcessors;
-      }
-      IntType cacheLineSize()const
-      {
-         return _cacheLineSize;
       }
       IntType stepping()const
       {
