@@ -230,17 +230,17 @@ namespace blib{namespace system_info{
       * We'll use the larger value to be generally safe.
       * Taken from SDL
       */
-      class CPUInfoTraits
+      struct CPUInfoTraits
       {
-      public:
          typedef boost::uint32_t DefIntType;
          typedef FeatureBitIndex FeatureBitIndexType;
          typedef BugBitIndex BugBitIndexType;
          static const DefIntType kDefaultCacheLineSize = 128;
          static const DefIntType kVendorStringMaxSize = 16;
          static const DefIntType kBrandStringMaxSize = 64;
+         static const DefIntType kDefaultPageSize = 1024*4;
       };
-
+//http://code.google.com/p/libjingle/source/browse/trunk/talk/session/phone/cpuid.cc?r=144
       struct CPUInfoHelper
       {
          static int numberOfProcessors()
@@ -254,10 +254,27 @@ namespace blib{namespace system_info{
             // It seems that sysconf returns the number of "logical" processors on both
             // mac and linux.  So we get the number of "online logical" processors.
             const long num = sysconf(_SC_NPROCESSORS_ONLN);
-            if (-1 == res)
-               retVal = 1;
+            if (-1 != num)
+            {
+               retVal = static_cast<UInt32>(num);
+            }
+#endif
+            return retVal;
+         }
 
-            retVal = static_cast<UInt32>(num);
+         static int pageSize()
+         {
+            int retVal = 1;
+#if defined(BOOST_WINDOWS)
+            SYSTEM_INFO info = {0};
+            GetSystemInfo(&info);
+            retVal = info.dwPageSize;
+#elif defined(__POSIX__)
+            const long num = sysconf(_SC_PAGE_SIZE);
+            if (-1 != num)
+            {
+               retVal = static_cast<UInt32>(num);
+            }
 #endif
             return retVal;
          }
@@ -518,6 +535,7 @@ namespace blib{namespace system_info{
       IntType _processorType;
       IntType _brandIndex;
       IntType _apicPhysicalId;
+      IntType _pageSize;
       bool _haveCpuId;
    private:
       SystemInfo()
@@ -525,6 +543,7 @@ namespace blib{namespace system_info{
          ,_stepping(0),_numberOfProcessors(1)
          ,_cacheLineSize(cpu_info::CPUInfoHelper::getCPUCacheLineSize())
          ,_haveCpuId(cpu_info::CPUInfoHelper::haveCPUID())
+         ,_pageSize(cpu_info::CPUInfoHelper::pageSize())
       {
          for(int i = 0;i < MyTraits::kVendorStringMaxSize; ++i)
          {
@@ -734,6 +753,10 @@ namespace blib{namespace system_info{
       IntType stepping()const
       {
          return _stepping;
+      }
+      IntType pageSize()const
+      {
+         return _pageSize;
       }
    };
 }
