@@ -1,9 +1,6 @@
 #ifndef __BLIB_ODRA__
 #define __BLIB_ODRA__
 
-#ifdef __SAMkEncodeMACHINkEncodeEXECUTION__
-#undef __SAMkEncodeMACHINkEncodeEXECUTION__
-#endif
 #ifndef __BLIB_SYSTEM_INFO_INCLUDED__
 #include <blib/sys/system_info.hpp>
 #endif
@@ -509,6 +506,15 @@ namespace blib{namespace odra{
          InstrID instrId()const
          {
             return _instrId;
+         }
+         boost::uint32_t opcode()const
+         {
+            return _opcode;
+         }
+
+         boost::uint32_t encodingFlags()const
+         {
+            return _encodingFlags;
          }
          //const register_details::Operand& GetOpd(size_t index) const {return opd_[index];}
          //register_details::Operand& GetOpd(size_t index) {return opd_[index];}
