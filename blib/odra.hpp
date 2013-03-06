@@ -33,11 +33,11 @@
 #endif
 
 #define MAKE_INST(code, name, group, flags, oflags0, oflags1, opReg, opCode0, opCode1) \
-  { InstructionDescriptionEnums::code, code##_INDEX, group, flags, { oflags0, oflags1 }, opReg, { opCode0, opCode1 } }
+  { InstructionTraitsEnums::code, code##_INDEX, group, flags, { oflags0, oflags1 }, opReg, { opCode0, opCode1 } }
 
-#define G(g) InstructionDescriptionEnums::kInstGrp##g
-#define F(f) InstructionDescriptionEnums::kInstFlg##f
-#define O(o) InstructionDescriptionEnums::kInstOpr##o
+#define G(g) InstructionTraitsEnums::kInstGrp##g
+#define F(f) InstructionTraitsEnums::kInstFlg##f
+#define O(o) InstructionTraitsEnums::kInstOpr##o
 
 
 #define INST_ADC_INDEX 0
@@ -1066,7 +1066,7 @@ namespace blib{namespace odra{
 
 
 
-      struct InstructionDescriptionEnums
+      struct InstructionTraitsEnums
       {
          // --------------------------------------------------------------------------
          // [Instruction Groups]
@@ -1835,13 +1835,13 @@ namespace blib{namespace odra{
             _INST_J_END = INST_JMP
          };
 
-      };//struct InstructionDescriptionEnums
+      };//struct InstructionTraitsEnums
 
       // ============================================================================
-      // [AsmJit::Instruction Description]
+      // [AsmJit::Instruction Traits]
       // ============================================================================
 
-      struct InstructionDescription
+      struct InstructionTraits
       {
          // --------------------------------------------------------------------------
          // [Members]
@@ -1871,47 +1871,47 @@ namespace blib{namespace odra{
          //! @brief Get whether the instruction is conditional or standard jump.
          bool isJump()const 
          { 
-            return (_flags & InstructionDescriptionEnums::kInstFlgJUMP) != 0;
+            return (_flags & InstructionTraitsEnums::kInstFlgJUMP) != 0;
          }
          //! @brief Get whether the instruction is MOV type.
          bool isMov()const 
          { 
-            return (_flags & InstructionDescriptionEnums::kInstFlgMOV) != 0;
+            return (_flags & InstructionTraitsEnums::kInstFlgMOV) != 0;
          }
          //! @brief Get whether the instruction is X87 FPU type.
          bool isFPU()const
          { 
-            return (_flags & InstructionDescriptionEnums::kInstFlgFPU) != 0;
+            return (_flags & InstructionTraitsEnums::kInstFlgFPU) != 0;
          }
          //! @brief Get whether the instruction can be prefixed by LOCK prefix.
          bool isLockable()const
          { 
-            return (_flags & InstructionDescriptionEnums::kInstFlgLOCKABLE) != 0; 
+            return (_flags & InstructionTraitsEnums::kInstFlgLOCKABLE) != 0; 
          }
 
          //! @brief Get whether the instruction is special type (this is used by
          //! @c Compiler to manage additional variables or functionality).
          bool isSpecial()const 
          { 
-            return (_flags & InstructionDescriptionEnums::kInstFlgSPECIAL) != 0; 
+            return (_flags & InstructionTraitsEnums::kInstFlgSPECIAL) != 0; 
          }
          //! @brief Get whether the instruction is special type and it performs
          //! memory access.
          bool isSpecialMem()const 
          { 
-            return (_flags & InstructionDescriptionEnums::kInstFlgSPECIAL_MEM) != 0; 
+            return (_flags & InstructionTraitsEnums::kInstFlgSPECIAL_MEM) != 0; 
          }
 
          // ============================================================================
          // [Instruction Name]
          // ============================================================================
 
-         // Following {DATA SECTION} is auto-generated using InstructionDescription data.
+         // Following {DATA SECTION} is auto-generated using InstructionTraits data.
          //
          // ${INSTRUCTION_DATA_BEGIN}
          static const char* _instructionName;
       };
-      const char* InstructionDescription::_instructionName = 
+      const char* InstructionTraits::_instructionName = 
          "adc\0"
          "add\0"
          "addpd\0"
@@ -2489,7 +2489,7 @@ namespace blib{namespace odra{
          "xorps\0"
          ;
 
-      const InstructionDescription instructionDescription[] =
+      const InstructionTraits InstructionTraits[] =
       {
          // Instruction code (enum)      | instruction name   | instruction group| instruction flags| oflags[0]           | oflags[1]           | r| opCode[0] | opcode[1]
          MAKE_INST(INST_ADC              , "adc"              , G(ALU)           , F(LOCKABLE)      , O(GQDWB_MEM)        , O(GQDWB_MEM)|O(IMM) , 2, 0x00000010, 0x00000080),
