@@ -14,27 +14,25 @@
 #ifndef __BLIB_COMPILER_CONFIG_INCLUDED__
 #include <blib/config/compiler_config.hpp>
 #endif
-
+#ifndef BOOST_CONFIG_HPP
+#include <boost/config.hpp>
+#endif
 #ifndef __STD_NEW_INCLUDED__
 #define __STD_NEW_INCLUDED__
 #include <new>
 #endif
-
 #ifndef __STD_STDEXCEPT_INCLUDED__
 #define __STD_STDEXCEPT_INCLUDED__
 #include <stdexcept>
 #endif
-
 #ifndef __STD_FUNCTIONAL_INCLUDED__
 #define __STD_FUNCTIONAL_INCLUDED__
 #include <functional>
 #endif
-
 #ifndef __STD_MEMORY_INCLUDED__
 #define __STD_MEMORY_INCLUDED__
 #include <memory>
 #endif
-
 #ifndef __STD_STRING_INCLUDED__
 #define __STD_STRING_INCLUDED__
 #include <string>
@@ -82,5 +80,8 @@ namespace blib
 	};
 };
 
+#ifdef BOOST_NO_CXX11_NULLPTR
+#define nullptr NULL
+#endif
 
 #endif// __BLIB_CONFIG_INCLUDED__
