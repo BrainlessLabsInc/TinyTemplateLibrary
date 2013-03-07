@@ -1810,7 +1810,7 @@ namespace blib{namespace odra{namespace instruction_details{
    // [AsmJit::Instruction Traits]
    // ============================================================================
 
-   struct InstructionTraits
+   struct InstructionDetails
    {
       // --------------------------------------------------------------------------
       // [Members]
@@ -1875,12 +1875,12 @@ namespace blib{namespace odra{namespace instruction_details{
       // [Instruction Name]
       // ============================================================================
 
-      // Following {DATA SECTION} is auto-generated using InstructionTraits data.
+      // Following {DATA SECTION} is auto-generated using InstructionDetails data.
       //
       // ${INSTRUCTION_DATA_BEGIN}
       static const char* _instructionName;
    };
-   const char* InstructionTraits::_instructionName = 
+   const char* InstructionDetails::_instructionName = 
       "adc\0"
       "add\0"
       "addpd\0"
@@ -2458,7 +2458,12 @@ namespace blib{namespace odra{namespace instruction_details{
       "xorps\0"
       ;
 
-   const InstructionTraits InstructionTraits[] =
+   struct InstructionTraits
+   {
+      const static InstructionDetails _instructionDetails[];
+   };
+
+   const InstructionDetails InstructionTraits::_instructionDetails[] =
    {
       // Instruction code (enum)      | instruction name   | instruction group| instruction flags| oflags[0]           | oflags[1]           | r| opCode[0] | opcode[1]
       MAKE_INST(INST_ADC              , "adc"              , G(ALU)           , F(LOCKABLE)      , O(GQDWB_MEM)        , O(GQDWB_MEM)|O(IMM) , 2, 0x00000010, 0x00000080),
