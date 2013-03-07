@@ -54,7 +54,7 @@ namespace blib{namespace odra{namespace memory{
 #if defined(BOOST_WINDOWS)
             VirtualFree((LPVOID)aMem,0,MEM_RELEASE);
 #elif defined(__POSIX__)
-            munmap(aMem, _lastAllocSize);
+            munmap(aMem, it->second);
 #endif
             _memSizeMap.erase(it);
          }

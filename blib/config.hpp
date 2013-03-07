@@ -83,5 +83,8 @@ namespace blib
 #ifdef BOOST_NO_CXX11_NULLPTR
 #define nullptr NULL
 #endif
+#ifndef BLIB_UNUSED
+#define BLIB_UNUSED(var) ((void)var)
+#endif
 
 #endif// __BLIB_CONFIG_INCLUDED__

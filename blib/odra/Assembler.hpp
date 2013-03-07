@@ -84,6 +84,63 @@ namespace blib{namespace odra{namespace assembler{
       { 
          pushBackCode(((s & 0x03) << 6) | ((i & 0x07) << 3) | (b & 0x07));
       }
+
+      //! @brief Emit REX prefix (64-bit mode only).
+      void pushBackRexR(const boost::uint8_t w, const boost::uint8_t opReg, const boost::uint8_t regCode, const bool forceRexPrefix)
+      {
+#if defined(__PLATFORM64__)
+         const boost::uint8_t r = (opReg & 0x8) != 0;
+         const boost::uint8_t b = (regCode & 0x8) != 0;
+
+         // w Default operand size(0=Default, 1=64-bit).
+         // r Register field (1=high bit extension of the ModR/M REG field).
+         // x Index field not used in RexR
+         // b Base field (1=high bit extension of the ModR/M or SIB Base field).
+         if (w || r || b || forceRexPrefix)
+         {
+            pushBackCode(0x40 | (w << 3) | (r << 2) | b);
+         }
+#else
+         BLIB_UNUSED(w);
+         BLIB_UNUSED(opReg);
+         BLIB_UNUSED(regCode);
+         BLIB_UNUSED(forceRexPrefix);
+#endif // __PLATFORM64__
+      }
+/*TODO
+      //! @brief Emit REX prefix (64-bit mode only).
+      void pushBackRexRM(uint8_t w, uint8_t opReg, const Operand& rm, bool forceRexPrefix) ASMJIT_NOTHROW
+      {
+#if defined(__PLATFORM64__)
+         uint8_t r = (opReg & 0x8) != 0;
+         uint8_t x = 0;
+         uint8_t b = 0;
+
+         if (rm.isReg())
+         {
+            b = (reinterpret_cast<const BaseReg&>(rm).getRegCode() & 0x8) != 0;
+         }
+         else if (rm.isMem())
+         {
+            x = ((reinterpret_cast<const Mem&>(rm).getIndex() & 0x8) != 0) & (reinterpret_cast<const Mem&>(rm).getIndex() != INVALID_VALUE);
+            b = ((reinterpret_cast<const Mem&>(rm).getBase() & 0x8) != 0) & (reinterpret_cast<const Mem&>(rm).getBase() != INVALID_VALUE);
+         }
+
+         // w Default operand size(0=Default, 1=64-bit).
+         // r Register field (1=high bit extension of the ModR/M REG field).
+         // x Index field (1=high bit extension of the SIB Index field).
+         // b Base field (1=high bit extension of the ModR/M or SIB Base field).
+         if (w || r || x || b || forceRexPrefix)
+         {
+            _emitByte(0x40 | (w << 3) | (r << 2) | (x << 1) | b);
+         }
+#else
+         BLIB_UNUSED(w);
+         BLIB_UNUSED(opReg);
+         BLIB_UNUSED(rm);
+#endif // 
+      }
+      */
    };// class Assembler
 
 }// namespace assembler
