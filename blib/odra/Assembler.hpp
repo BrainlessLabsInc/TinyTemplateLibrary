@@ -12,12 +12,15 @@
 #endif
 
 namespace blib{namespace odra{namespace assembler{
+   
+   struct NullDebugger
+   {};
 
    template<
        class PlatformTraits
       ,class InstructionTraits
-      ,class ExecutableBuffer
-      ,class DebuggerTraits>
+      ,class ExecutableBuffer = blib::odra::memory::ExeBuffer
+      ,class DebuggerTraits = NullDebugger>
    class Assembler
    {
    };// class Assembler
