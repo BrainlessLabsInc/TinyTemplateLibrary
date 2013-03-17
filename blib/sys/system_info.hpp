@@ -32,7 +32,7 @@
 #ifndef _WINDOWS_
 #include <windows.h>
 #endif
-#elif defined(__POSIX__)
+#elif defined(__BLIB_POSIX__)
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/mman.h>
@@ -79,9 +79,9 @@
 #include <sys/param.h>
 #include <sys/sysctl.h> /* For AltiVec check */
 #include <machine/cpu.h>
-#elif SDL_ALTIVEC_BLITTERS && HAVE_SETJMP
-#include <signal.h>
-#include <setjmp.h>
+//#elif SDL_ALTIVEC_BLITTERS && HAVE_SETJMP
+//#include <signal.h>
+//#include <setjmp.h>
 #endif
 
 namespace blib{namespace system_info{
@@ -245,12 +245,12 @@ namespace blib{namespace system_info{
       {
          static int numberOfProcessors()
          {
-            int retVal = 1;
+            int retVal = 1; // If we are executing program at least one processor is there :)
 #if defined(BOOST_WINDOWS)
             SYSTEM_INFO info = {0};
             GetSystemInfo(&info);
             retVal = info.dwNumberOfProcessors;
-#elif defined(__POSIX__) && defined(_SC_NPROCESSORS_ONLN)
+#elif defined(__BLIB_POSIX__) && defined(_SC_NPROCESSORS_ONLN)
             // It seems that sysconf returns the number of "logical" processors on both
             // mac and linux.  So we get the number of "online logical" processors.
             const long num = sysconf(_SC_NPROCESSORS_ONLN);
@@ -269,7 +269,7 @@ namespace blib{namespace system_info{
             SYSTEM_INFO info = {0};
             GetSystemInfo(&info);
             retVal = info.dwPageSize;
-#elif defined(__POSIX__)
+#elif defined(__BLIB_POSIX__)
             const long num = sysconf(_SC_PAGE_SIZE);
             if (-1 != num)
             {
@@ -419,7 +419,7 @@ namespace blib{namespace system_info{
 #else
             a = b = c = d = 0;
 #endif
-         }
+         ;}
 
          static const std::string& getCPUType()
          {

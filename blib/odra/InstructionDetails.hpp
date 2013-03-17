@@ -669,7 +669,7 @@ namespace blib{namespace odra{namespace instruction_details{
          /** \var SIZkEncodeOkInsFlagGP_REG
          * Size of general-purpose register
          */
-#ifdef __PLATFORM64__
+#ifdef __BLIB_PLATFORM64__
          static const int numOfPhysicalRegs = 16;
          static const int gpRegSize = 8;
          static const int platformSize = 64;
@@ -685,139 +685,139 @@ namespace blib{namespace odra{namespace instruction_details{
       {
          return 0;
       }
-      template<bool kIsSymbolic>
-      class RegId
-      {
-         typedef RegId MyType;
-         typedef typename boost::conditional<kIsSymbolic, boost::int64_t,EPhysicalRegID>::type RegIdType;
-      private:
-         RegIdType _regId;
-         ERegType _regType;
-      public:
-         RegId()
-            :_regId(invalid_value<RegIdType>()),_regType(invalid_value<ERegType>())
-         {
-            if(kIsSymbolic)
-            {
-               initRegId<kIsSymbolic>();
-            }
-         }
-         RegId(const RegId& aRhs)
-            :_regId(invalid_value<RegIdType>()),_regType(aRhs._regType)
-         {
-            if(kIsSymbolic)
-            {
-               initRegId<kIsSymbolic>();
-            }
-         }
-         RegId(const RegIdType aRegId, const ERegType aRegType)
-            :_regId(invalid_value<RegIdType>()),_regType(aRegType)
-         {    
-            if(isSymbolic)
-            {
-               initRegId<kIsSymbolic>();
-            }
-         }
-         bool operator==(const RegId& aRegId)const
-         {
-            return (_regId == aRegId._regId) && (_regType == aRegId._regType);
-         }
-         bool operator!=(const RegId& aRegId)const
-         {
-            return !(*this == aRegId);
-         }
+      //template<bool kIsSymbolic>
+      //class RegId
+      //{
+      //   typedef RegId MyType;
+      //   typedef typename boost::conditional<kIsSymbolic, boost::int64_t,EPhysicalRegID>::type RegIdType;
+      //private:
+      //   RegIdType _regId;
+      //   ERegType _regType;
+      //public:
+      //   RegId()
+      //      :_regId(invalid_value<RegIdType>()),_regType(invalid_value<ERegType>())
+      //   {
+      //      if(kIsSymbolic)
+      //      {
+      //         initRegId<kIsSymbolic>();
+      //      }
+      //   }
+      //   RegId(const RegId& aRhs)
+      //      :_regId(invalid_value<RegIdType>()),_regType(aRhs._regType)
+      //   {
+      //      if(kIsSymbolic)
+      //      {
+      //         initRegId<kIsSymbolic>();
+      //      }
+      //   }
+      //   RegId(const RegIdType aRegId, const ERegType aRegType)
+      //      :_regId(invalid_value<RegIdType>()),_regType(aRegType)
+      //   {    
+      //      if(isSymbolic)
+      //      {
+      //         initRegId<kIsSymbolic>();
+      //      }
+      //   }
+      //   bool operator==(const RegId& aRegId)const
+      //   {
+      //      return (_regId == aRegId._regId) && (_regType == aRegId._regType);
+      //   }
+      //   bool operator!=(const RegId& aRegId)const
+      //   {
+      //      return !(*this == aRegId);
+      //   }
 
-         bool isInvalid()const
-         {
-            return (invalid_value<RegIdType>() == _regId) || (invalid_value<ERegType>() == _regType);
-         }
+      //   bool isInvalid()const
+      //   {
+      //      return (invalid_value<RegIdType>() == _regId) || (invalid_value<ERegType>() == _regType);
+      //   }
 
-         bool isSymbolic()const
-         {
-            return kIsSymbolic;
-         }
-      private:
-         template<bool isSym>
-         void initRegId();
+      //   bool isSymbolic()const
+      //   {
+      //      return kIsSymbolic;
+      //   }
+      //private:
+      //   template<bool isSym>
+      //   void initRegId();
 
-         template<>
-         void initRegId<true>()
-         {
-            static mutable boost::atomic<RegIdType> _nextId(1);
-            _regId = _nextId.fetch_add(1, boost::memory_order_relaxed);
-         }
-      };
+      //   template<>
+      //   void initRegId<true>()
+      //   {
+      //      static mutable boost::atomic<RegIdType> _nextId(1);
+      //      _regId = _nextId.fetch_add(1, boost::memory_order_relaxed);
+      //   }
+      //};
 
-      // Register
-      struct Reg
-      {
-         RegId<false> _regId;
-         bool _isReassignable;
-         Reg()
-            :_isReassignable(false)
-         {}
-      };
+      //// Register
+      //struct Reg
+      //{
+      //   RegId<false> _regId;
+      //   bool _isReassignable;
+      //   Reg()
+      //      :_isReassignable(false)
+      //   {}
+      //};
 
-      // Memory
-      struct Mem
-      {
-         RegId<false> _base;
-         RegId<false> _index;
-         boost::int64_t _scale;
-         boost::int64_t _disp;
-         boost::uint8_t _baseSize; // OpdSize
-         boost::uint8_t _indexSize; // OpdSize
-         Mem()
-            :_scale(0),_disp(0),_baseSize(0),_indexSize(0)
-         {}
-      };
+      //// Memory
+      //struct Mem
+      //{
+      //   RegId<false> _base;
+      //   RegId<false> _index;
+      //   boost::int64_t _scale;
+      //   boost::int64_t _disp;
+      //   boost::uint8_t _baseSize; // OpdSize
+      //   boost::uint8_t _indexSize; // OpdSize
+      //   Mem()
+      //      :_scale(0),_disp(0),_baseSize(0),_indexSize(0)
+      //   {}
+      //};
 
-      // Immediate
-      struct Immediate
-      {
-         typedef boost::int64_t ValueType;
-         ValueType _value;
-         Immediate(const ValueType aValue)
-            :_value(aValue)
-         {}
-      };
+      //// Immediate
+      //struct Immediate
+      //{
+      //   typedef boost::int64_t ValueType;
+      //   ValueType _value;
+      //   Immediate(const ValueType aValue)
+      //      :_value(aValue)
+      //   {}
+      //};
 
-      struct OperandTraits
-      {
-         typedef Immediate ImmediateType;
-         typedef Mem MemType;
-         typedef Reg RegType;
-         template<EOperandType kIn>
-         struct SelectOperandType
-         {
-            typename boost::conditional<kOpTypeReg == kIn
-               ,RegType, typename boost::conditional<kOpTypeMem == kIn
-               ,MemType, ImmediateType>::type>::type OperandType;
-         };
-      };
+      //struct OperandTraits
+      //{
+      //   typedef Immediate ImmediateType;
+      //   typedef Mem MemType;
+      //   typedef Reg RegType;
+      //   template<EOperandType kIn>
+      //   struct SelectOperandType
+      //   {
+      //      typename boost::conditional<kOpTypeReg == kIn
+      //         ,RegType, typename boost::conditional<kOpTypeMem == kIn
+      //         ,MemType, ImmediateType>::type>::type OperandType;
+      //   };
+      //};
 
-      template<EOperandType kOperandType,typename OperandTraits,typename TPlatformTraits = PlatformTraits>
-      class Operand : public OperandTraits::SelectOperandType<kOperandType>::OperandType
-      {
-      public:
-         typedef typename OperandTraits::SelectOperandType<kOperandType>::OperandType OperandType;
-         typedef boost::uint16_t SizeType;
-         EOperandType operandType()const
-         {
-            return kOperandType;
-         }
-         SizeType operandSize()const
-         {
-            return _operandSize;
-         }
-         OperandType& operand()
-         {
-            return _operand;
-         }
-      private:
-         OperandType _operand;
-         SizeType _operandSize;
-      };
+      //template<EOperandType kOperandType,typename OperandTraits,typename TPlatformTraits = PlatformTraits>
+      //class Operand : public OperandTraits::SelectOperandType<kOperandType>::OperandType
+      //{
+      //public:
+      //   typedef typename OperandTraits::SelectOperandType<kOperandType>::OperandType OperandType;
+      //   typedef boost::uint16_t SizeType;
+      //   EOperandType operandType()const
+      //   {
+      //      return kOperandType;
+      //   }
+      //   SizeType operandSize()const
+      //   {
+      //      return _operandSize;
+      //   }
+      //   OperandType& operand()
+      //   {
+      //      return _operand;
+      //   }
+      //private:
+      //   OperandType _operand;
+      //   SizeType _operandSize;
+      //};
 
    } // namespace register_details
 
@@ -1435,8 +1435,7 @@ namespace blib{namespace odra{namespace instruction_details{
          INST_INC,           // X86/X64
          INST_INT3,          // X86/X64
          INST_J,             // Begin (jcc)
-         INST_JA = 
-         INST_J,           // X86/X64 (jcc)
+         INST_JA = INST_J,   // X86/X64 (jcc)
          INST_JAE,           // X86/X64 (jcc)
          INST_JB,            // X86/X64 (jcc)
          INST_JBE,           // X86/X64 (jcc)
@@ -3049,44 +3048,44 @@ namespace blib{namespace odra{namespace instruction_details{
 
 #undef MAKE_INST
    /// Instruction
-   struct Instr
-   {
-      //static const size_t _maxOperandCount = 6;
-      EInstrID _instrId; ///< Instruction ID
-      boost::uint32_t _opcode; ///< Opcode
-      boost::uint32_t _encodingFlags; ///< EncodingFlags
-      //register_details::Operand _operand[_maxOperandCount]; ///< Operands
+   //struct Instr
+   //{
+   //   //static const size_t _maxOperandCount = 6;
+   //   EInstrID _instrId; ///< Instruction ID
+   //   boost::uint32_t _opcode; ///< Opcode
+   //   boost::uint32_t _encodingFlags; ///< EncodingFlags
+   //   //register_details::Operand _operand[_maxOperandCount]; ///< Operands
 
-      Instr(const EInstrID id,const boost::uint32_t opcode, boost::uint32_t encodinkInsGrpflag
-         /*            ,const register_details::Operand& opd1 = register_details::Operand(), const register_details::Operand& opd2 = register_details::Operand()
-         ,const register_details::Operand& opd3 = register_details::Operand(), const register_details::Operand& opd4 = register_details::Operand()
-         ,const register_details::Operand& opd5 = register_details::Operand(), const register_details::Operand& opd6 = register_details::Operand()*/)
-         :_instrId(id), _opcode(opcode), _encodingFlags(encodinkInsGrpflag) 
-      {
-         //_operand[0] = opd1;
-         //_operand[1] = opd2;
-         //_operand[2] = opd3;
-         //_operand[3] = opd4;
-         //_operand[4] = opd5;
-         //_operand[5] = opd6;
-      }
+   //   Instr(const EInstrID id,const boost::uint32_t opcode, boost::uint32_t encodinkInsGrpflag
+   //      /*            ,const register_details::Operand& opd1 = register_details::Operand(), const register_details::Operand& opd2 = register_details::Operand()
+   //      ,const register_details::Operand& opd3 = register_details::Operand(), const register_details::Operand& opd4 = register_details::Operand()
+   //      ,const register_details::Operand& opd5 = register_details::Operand(), const register_details::Operand& opd6 = register_details::Operand()*/)
+   //      :_instrId(id), _opcode(opcode), _encodingFlags(encodinkInsGrpflag) 
+   //   {
+   //      //_operand[0] = opd1;
+   //      //_operand[1] = opd2;
+   //      //_operand[2] = opd3;
+   //      //_operand[3] = opd4;
+   //      //_operand[4] = opd5;
+   //      //_operand[5] = opd6;
+   //   }
 
-      EInstrID instrId()const
-      {
-         return _instrId;
-      }
-      boost::uint32_t opcode()const
-      {
-         return _opcode;
-      }
+   //   EInstrID instrId()const
+   //   {
+   //      return _instrId;
+   //   }
+   //   boost::uint32_t opcode()const
+   //   {
+   //      return _opcode;
+   //   }
 
-      boost::uint32_t encodingFlags()const
-      {
-         return _encodingFlags;
-      }
-      //const register_details::Operand& GetOpd(size_t index) const {return opd_[index];}
-      //register_details::Operand& GetOpd(size_t index) {return opd_[index];}
-   };
+   //   boost::uint32_t encodingFlags()const
+   //   {
+   //      return _encodingFlags;
+   //   }
+   //   //const register_details::Operand& GetOpd(size_t index) const {return opd_[index];}
+   //   //register_details::Operand& GetOpd(size_t index) {return opd_[index];}
+   //};
 
 }  // instruction_details
 }  // namespace odra

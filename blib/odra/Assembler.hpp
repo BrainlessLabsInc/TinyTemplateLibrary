@@ -106,7 +106,7 @@ namespace blib{namespace odra{namespace assembler{
 //      //! @brief Emit REX prefix (64-bit mode only).
 //      void pushBackRexR(const boost::uint8_t w, const boost::uint8_t opReg, const boost::uint8_t regCode, const bool forceRexPrefix)
 //      {
-//#if defined(__PLATFORM64__)
+//#if defined(__BLIB_PLATFORM64__)
 //         const boost::uint8_t r = (opReg & 0x8) != 0;
 //         const boost::uint8_t b = (regCode & 0x8) != 0;
 //
@@ -123,13 +123,13 @@ namespace blib{namespace odra{namespace assembler{
 //         BLIB_UNUSED(opReg);
 //         BLIB_UNUSED(regCode);
 //         BLIB_UNUSED(forceRexPrefix);
-//#endif // __PLATFORM64__
+//#endif // __BLIB_PLATFORM64__
 //      }
 /*TODO
       //! @brief Emit REX prefix (64-bit mode only).
       void pushBackRexRM(uint8_t w, uint8_t opReg, const Operand& rm, bool forceRexPrefix) ASMJIT_NOTHROW
       {
-#if defined(__PLATFORM64__)
+#if defined(__BLIB_PLATFORM64__)
          uint8_t r = (opReg & 0x8) != 0;
          uint8_t x = 0;
          uint8_t b = 0;

@@ -39,7 +39,7 @@ namespace blib{namespace odra{namespace memory{
          RetTypePtr retType = nullptr;
 #if defined(BOOST_WINDOWS)
          retType = (RetTypePtr)VirtualAlloc(NULL,aSize,MEM_COMMIT | MEM_RESERVE,PAGE_EXECUTE_READWRITE);
-#elif defined(__POSIX__)
+#elif defined(__BLIB_POSIX__)
          // http://man7.org/linux/man-pages/man2/mmap.2.html
          retType = mmap(NULL,aSize,PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
 #endif
@@ -53,7 +53,7 @@ namespace blib{namespace odra{namespace memory{
          {
 #if defined(BOOST_WINDOWS)
             VirtualFree((LPVOID)aMem,0,MEM_RELEASE);
-#elif defined(__POSIX__)
+#elif defined(__BLIB_POSIX__)
             munmap(aMem, it->second);
 #endif
             _memSizeMap.erase(it);
